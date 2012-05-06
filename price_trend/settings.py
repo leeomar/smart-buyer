@@ -29,3 +29,7 @@ EXTENSIONS = {
     'price_trend.seeder.AutoSeedAppend': 0,
     'scrapy.contrib.resolver.CachingResolver': 0
 }
+
+SPIDER_PARSERS = {
+    "price_trend.spider.basic_parser.BasicParser",
+}
