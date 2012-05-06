@@ -19,13 +19,14 @@ class Seed(object):
     FIELD_NUM = 5
 
     def __init__(self, url, content_group, max_idepth, 
-            max_xdepth, crawl_interval):
+            max_xdepth, crawl_interval, priority):
         self.url = url 
         self.uid = get_uid(url)
         self.content_group = content_group 
         self.max_idepth = max_idepth 
         self.max_xdepth = max_xdepth
         self.crawl_interval = crawl_interval 
+        self.priority = priority
 
     @classmethod
     def from_line(cls, line):
