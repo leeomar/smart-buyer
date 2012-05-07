@@ -33,3 +33,11 @@ EXTENSIONS = {
 SPIDER_PARSERS = {
     "price_trend.spider.basic_parser.BasicParser",
 }
+
+#persistence layer group Mapping
+PLG_MAPPING = {
+    "360buy.com" : "360buy",
+    "okbuy.com" : 'okbuy',
+    "letao.com" : 'letao',
+    "price_monitor" : 'real_time_price',
+}

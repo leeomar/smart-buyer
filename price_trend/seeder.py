@@ -13,14 +13,14 @@ from scrapy.utils.reactor import CallLaterOnce
 
 '''
 seed file: 
-url\tcontent_group\tmax_idepth\tmax_xdepth\tcrawl_interval(seconnds)\tpriority
+url\tcontent_group\tmax_idepth\tmax_xdepth\tcrawl_interval(seconnds)\tpriority\tpl_group
 '''
 
 class Seed(object):
-    FIELD_NUM = 5
+    FIELD_NUM = 6
 
     def __init__(self, url, content_group, max_idepth, 
-            max_xdepth, crawl_interval, priority):
+            max_xdepth, crawl_interval, priority, pl_group):
         self.url = url 
         self.uid = get_uid(url)
         self.content_group = content_group 
@@ -28,12 +28,14 @@ class Seed(object):
         self.max_xdepth = max_xdepth
         self.crawl_interval = crawl_interval 
         self.priority = priority
+        self.pl_group = pl_group #persistent layer group
 
     def __str__(self):
-        return "Seed[url:%s, uid:%s, content_group:%s, max_idepth:%s, \
-            max_xdepth:%s, craw_interval:%s, priority:%s]" % (self.url,
-            self.uid, self.content_group, self.max_idepth, self.max_xdepth,
-            self.crawl_interval, self.priority
+        return "Seed[url:%s, uid:%s, cg:%s, max_idepth:%s, \
+            max_xdepth:%s, craw_interval:%s, priority:%s, plg: %s]" % \
+            (self.url, self.uid, self.content_group, self.max_idepth, 
+             self.max_xdepth, self.crawl_interval, self.priority,
+             self.pl_group
             )
 
     @classmethod
@@ -44,7 +46,32 @@ class Seed(object):
                 len(fields), Seed.FIELD_NUM), level=log.ERROR)
             return  None
 
-        return cls(fields[0], fields[1], fields[2], fields[3], fields[4])
+        return cls(fields[0], fields[1], fields[2], fields[3], 
+            fields[4], fields[5])
+
+#TODO add mutex
+class RequestSlot(object):
+
+    def __init__(self):
+        self.pending_request_queue = Queue.PriorityQueue() 
+        self.pending_uids_map = {}
+
+    def put(self, request, priority=3):
+        uid = request.meta['uid']
+        if uid in self.pending_uids_map:
+            return
+
+        self.pending_request_queue.put((priority, request))
+        self.pending_uids_map[request.meta['uid']] = 1
+        
+    def get(self, timeout=-1):
+        priority, request = self.pending_request_queue.get(
+            timeout=timeout)
+        del self.pending_uids_map[request.meta['uid']]
+        return request
+
+    def empty(self):
+        return self.pending_request_queue.empty()
 
 class SeedAppend(object):
     DEFAULT_BATCH_SIZE = 5
@@ -53,7 +80,7 @@ class SeedAppend(object):
 
     def __init__(self):
         self.idle_spider = []
-        self.request_queue = Queue.PriorityQueue() 
+        self.pending_requests = RequestSlot() 
         self.last_crawl_time = {}
         self.last_seed_time = 0 
         self.seeds_file = settings.get("SEED_FILE") 
@@ -62,13 +89,15 @@ class SeedAppend(object):
 
     def handle_spider_idle(self, spider):
         #crawler.engine.crawl(request, self) 
-        if self.request_queue.empty():
+        if self.pending_requests.empty():
             self.nextcall.schedule()
         else:
             num = 0
             while num < SeedAppend.DEFAULT_BATCH_SIZE \
-                and self.request_queue.empty() is False:
-                priority, request = self.request_queue.get(
+                and self.pending_requests.empty() is False:
+                #priority, request = self.pending_request_queue.get(
+                #    timeout=SeedAppend.DEFAULT_QUEUE_TIMEOUT)
+                request = self.pending_requests.get(
                     timeout=SeedAppend.DEFAULT_QUEUE_TIMEOUT)
                 self.last_crawl_time[request.meta['uid']] = int(time.time())
                 crawler.engine.crawl(request, spider)
@@ -105,8 +134,10 @@ class SeedAppend(object):
                 continue
 
             if self.need_crawl(item):
+                #TODO: if url is aready in pending_request_queue, then no need to add again
                 request = self.make_request_from_seed(item)
-                self.request_queue.put((item.priority, request))
+                #self.pending_request_queue.put((item.priority, request))
+                self.pending_requests.put(request, item.priority)
                 log.msg("load %s" % item, level=log.DEBUG)
 
         self.last_seed_time = int(time.time())
