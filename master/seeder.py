@@ -28,6 +28,11 @@ pending
 use URL_DOWNLOAD_SIG, update last crawl time
 '''
 
+class GlobalInfo(object):
+    
+    def __init__(self):
+        pass
+
 class Host(object):
     default_crawl_interval
 
@@ -35,7 +40,12 @@ class Host(object):
         self.host = None
         self.priority = 0
         self.last_crawl_time = None
+        
+        self.total_url_num = 0
+        self.crawled_url_num = 0
         self.pending_url_num = 0
+        self.running_url_num = 0
+        
         self.pending_urls = Queue.PriorityQueue() 
         self.crawl_interval = Host.default_crawl_interval
 
