@@ -41,3 +41,8 @@ PLG_MAPPING = {
     "letao.com" : 'letao',
     "price_monitor" : 'real_time_price',
 }
+
+MONGODB_HOST='127.0.0.1'
+MONGODB_PORT=27017
+MONGODB_DBNAME='price_trend'
+DEFAULT_COLLECTION_NAME='default_collection'

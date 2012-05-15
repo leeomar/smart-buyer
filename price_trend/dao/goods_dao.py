@@ -12,9 +12,9 @@ class GoodsDAO:
         self.dbclient = MongoClient().connect(
                 host, port, dbname, collection_name)
 
-    def get(self, url):
+    def get(self, url, collection_name=None):
         uid = get_uid(url)
-        dbrecord = self.dbclient.find_one(pk=uid)
+        dbrecord = self.dbclient.find_one(pk=uid, collection_name)
         if dbrecord:
             goods_item = GoodsItem()
             goods_item.oid = str(dbrecord['_id'])
@@ -30,16 +30,16 @@ class GoodsDAO:
         else:
             return None
     
-    def put(self, url, name, cat, price):
+    def put(self, url, name, cat, price, collection_name=None):
         uid = get_uid(url)
         domain = get_domain(url)
         crawl_time = int(time.time()) 
-        goods_item = self.get(url)
+        goods_item = self.get(url, collection_name)
         if goods_item:
-            self.dbclient.insert_field(pk=uid,  
+            self.dbclient.insert_field(pk=uid, collection_name, 
                 data=(price, crawl_time),)
             if price <= goods_item.get_bottom_price():
-                self.dbclient.update_field(pk=uid, 
+                self.dbclient.update_field(pk=uid, collection_name, 
                    bottom_price=(price, crawl_time))
         else if not goods_item.duplicate_price_item(price, crawl_time):
             self.dbclient.insert(
@@ -47,7 +47,7 @@ class GoodsDAO:
                     "cat":cat, "data":[(price, crawl_time)], 
                     "bottom_price":(price, crawl_time), 
                     "domain=":domain
-                 }, pk=uid)
+                 }, pk=uid, collection_name)
         else:
             #TODO log here
             pass

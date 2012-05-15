@@ -63,6 +63,7 @@ class URL(object):
               self.cur_xdepth, self.priority, self.pl_group
             )
 
+"""
 class Seed(URL):
     #FIELD_NUM = 6
 
@@ -86,6 +87,7 @@ class Seed(URL):
 
         return cls(fields[0], fields[1], fields[2], fields[3], 
             fields[4], fields[5])
+"""
 
 #TODO add mutex
 class RequestSlot(object):
