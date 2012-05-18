@@ -1,13 +1,6 @@
 #/bin/python
 import time
 import Queue
-from scrapy.xlib.pydispatch import dispatcher
-from scrapy.exceptions import DontCloseSpider
-from scrapy import signals
-from scrapy import log
-from scrapy.conf import settings
-from scrapy.http import Request
-from scrapy.project import crawler
 from price_trend.utils.url_util import get_uid
 from scrapy.utils.reactor import CallLaterOnce
 
@@ -20,9 +13,7 @@ url\tcontent_group\tmax_idepth\tmax_xdepth\tcrawl_interval(seconnds)\tpriority\t
     host2:list<seed>
 }
 
-
 runing
-
 pending
 
 use URL_DOWNLOAD_SIG, update last crawl time
@@ -59,21 +50,28 @@ class SpiderInfo(object):
 appending_seeds = []
 '''
 class SeedsServiceImpl:
+    SEED_PKG_SIZE = 5
     
     def __init__(self):
         self.pending_seeds = []
         self.host_info = {}
         self.candidate_seeds = []
 
-        self.load_seeds_call= CallLaterOnce(self._enqueue)
+        self.load_seeds_call= CallLaterOnce(self._load_seeds)
         self.load_seeds_call.schedule()
 
     def get_seeds(spiderid):
-        pass
+        num = 0
+        while num < self.SEED_PKG_SIZE \
+            and len(self.pending_seeds) > 0:
+            num += 1
+            yeild self.pending_seeds[0]
+            del self.pending_seeds[0]
 
     #add seeds to candidate seeds list
     def add_seeds(pkg):
-        pass
+        for seed in pkg:
+            self.candidate_seeds.append(seed)
 
     def get_latency_time(url):
         domain = get_domain(url) 
@@ -85,8 +83,7 @@ class SeedsServiceImpl:
             hostinfo.last_crawl_time = time.time()
             return 0 
         else:
-            return -left_time 
-
+            return -left_time
 
     def _caculate_url_priority(seed):
         domain = get_domain(seed.url)
@@ -120,5 +117,5 @@ class SeedsServiceImpl:
             pq = None
             self.hostinfo_in_queue = None
         else:
-            #CallLaterOnce
-            reactor.callLater()
+            self.load_seeds_call.schedule(5)
+            
