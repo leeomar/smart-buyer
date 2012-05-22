@@ -1,4 +1,3 @@
-
 struct Seed {
     1: string url,
     2: string content_group,
@@ -12,15 +11,24 @@ struct Seed {
 
 struct SeedsPackage {
     1: string ID,
+    2: required list<Seed> seeds,
+}
 
+struct JobReport {
+    /*seconds*/
+    1:i32 work_time = 0,
+    2:i32 idle_time = 0,
+    4:i32 fail_url_num = 0,
+    3:i32 crawled_url_num = 0,
+    5:i32 crawled_page_size = 0,
 }
 
 exception ServerError {
-    1: string reason,
+    1: string reason = 'unkown server internal error',
 }
 
 exception RequestError {
-    1: string reason,
+    1: string reason = 'illeage request',
 }
 
 service RegistService {
@@ -30,15 +38,17 @@ service RegistService {
 
 service SeedsService {
     /**
-     * when spider is idle, it will request seeds from master
-     * if the spider is not registed, master will auto do this for unregisted
-     * spider
-     * @TODO: spider should report its last time job info to master, include:
-     * time, total page size, url num and so on 
+     * if the spider is unregisted, 
+     *      master will do auto registration
+     * spider reports its last job info to master
      */
-    SeedsPackage get_seeds(1:string spiderid),
-    void add_seeds(1:SeedsPackage pkg),
+    SeedsPackage get_seeds(1:string spiderid, 3:JobReport report),
+
+    /*
+     */
+    void add_seeds(1:SeedsPackage pkg, 2:string spiderid), 
     
-    #latency
-    i32 get_latency_time(1:string url),
+    /*
+     */
+    i32 get_latency_time(1:string url, 2:string spiderid),
 }
