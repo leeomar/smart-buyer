@@ -52,7 +52,7 @@ if __name__ == '__main__':
     handler = UserStorageHandler()
     processor = UserStorage.Processor(handler)
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
-    server = reactor.listenTCP(9090,
+    server = reactor.listenTCP(9095,
                 TTwisted.ThriftServerFactory(processor,
                 pfactory), interface="127.0.0.1")
     reactor.run()

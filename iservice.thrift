@@ -46,9 +46,9 @@ service SeedsService {
 
     /*
      */
-    void add_seeds(1:SeedsPackage pkg, 2:string spiderid), 
+    void add_seeds(1:string spiderid, 2:SeedsPackage pkg), 
     
     /*
      */
-    i32 get_latency_time(1:string url, 2:string spiderid),
+    i32 get_latency_time(1:string spiderid, 2:string url),
 }

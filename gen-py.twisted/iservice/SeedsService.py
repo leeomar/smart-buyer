@@ -21,29 +21,30 @@ from twisted.internet import defer
 from thrift.transport import TTwisted
 
 class Iface(Interface):
-  def get_seeds(spiderid):
+  def get_seeds(spiderid, report):
     """
-    when spider is idle, it will request seeds from master
-    if the spider is not registed, master will auto do this for unregisted
-    spider
-    @TODO: spider should report its last time job info to master, include:
-    time, total page size, url num and so on
+    if the spider is unregisted,
+         master will do auto registration
+    spider reports its last job info to master
 
     Parameters:
      - spiderid
+     - report
     """
     pass
 
-  def add_seeds(pkg):
+  def add_seeds(spiderid, pkg):
     """
     Parameters:
+     - spiderid
      - pkg
     """
     pass
 
-  def get_latency_time(url):
+  def get_latency_time(spiderid, url):
     """
     Parameters:
+     - spiderid
      - url
     """
     pass
@@ -58,27 +59,27 @@ class Client:
     self._seqid = 0
     self._reqs = {}
 
-  def get_seeds(self, spiderid):
+  def get_seeds(self, spiderid, report):
     """
-    when spider is idle, it will request seeds from master
-    if the spider is not registed, master will auto do this for unregisted
-    spider
-    @TODO: spider should report its last time job info to master, include:
-    time, total page size, url num and so on
+    if the spider is unregisted,
+         master will do auto registration
+    spider reports its last job info to master
 
     Parameters:
      - spiderid
+     - report
     """
     self._seqid += 1
     d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_get_seeds(spiderid)
+    self.send_get_seeds(spiderid, report)
     return d
 
-  def send_get_seeds(self, spiderid):
+  def send_get_seeds(self, spiderid, report):
     oprot = self._oprot_factory.getProtocol(self._transport)
     oprot.writeMessageBegin('get_seeds', TMessageType.CALL, self._seqid)
     args = get_seeds_args()
     args.spiderid = spiderid
+    args.report = report
     args.write(oprot)
     oprot.writeMessageEnd()
     oprot.trans.flush()
@@ -97,20 +98,22 @@ class Client:
       return d.callback(result.success)
     return d.errback(TApplicationException(TApplicationException.MISSING_RESULT, "get_seeds failed: unknown result"))
 
-  def add_seeds(self, pkg):
+  def add_seeds(self, spiderid, pkg):
     """
     Parameters:
+     - spiderid
      - pkg
     """
     self._seqid += 1
     d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_add_seeds(pkg)
+    self.send_add_seeds(spiderid, pkg)
     return d
 
-  def send_add_seeds(self, pkg):
+  def send_add_seeds(self, spiderid, pkg):
     oprot = self._oprot_factory.getProtocol(self._transport)
     oprot.writeMessageBegin('add_seeds', TMessageType.CALL, self._seqid)
     args = add_seeds_args()
+    args.spiderid = spiderid
     args.pkg = pkg
     args.write(oprot)
     oprot.writeMessageEnd()
@@ -128,20 +131,22 @@ class Client:
     iprot.readMessageEnd()
     return d.callback(None)
 
-  def get_latency_time(self, url):
+  def get_latency_time(self, spiderid, url):
     """
     Parameters:
+     - spiderid
      - url
     """
     self._seqid += 1
     d = self._reqs[self._seqid] = defer.Deferred()
-    self.send_get_latency_time(url)
+    self.send_get_latency_time(spiderid, url)
     return d
 
-  def send_get_latency_time(self, url):
+  def send_get_latency_time(self, spiderid, url):
     oprot = self._oprot_factory.getProtocol(self._transport)
     oprot.writeMessageBegin('get_latency_time', TMessageType.CALL, self._seqid)
     args = get_latency_time_args()
+    args.spiderid = spiderid
     args.url = url
     args.write(oprot)
     oprot.writeMessageEnd()
@@ -191,7 +196,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = get_seeds_result()
-    d = defer.maybeDeferred(self._handler.get_seeds, args.spiderid)
+    d = defer.maybeDeferred(self._handler.get_seeds, args.spiderid, args.report)
     d.addCallback(self.write_results_success_get_seeds, result, seqid, oprot)
     return d
 
@@ -207,7 +212,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = add_seeds_result()
-    d = defer.maybeDeferred(self._handler.add_seeds, args.pkg)
+    d = defer.maybeDeferred(self._handler.add_seeds, args.spiderid, args.pkg)
     d.addCallback(self.write_results_success_add_seeds, result, seqid, oprot)
     return d
 
@@ -223,7 +228,7 @@ class Processor(TProcessor):
     args.read(iprot)
     iprot.readMessageEnd()
     result = get_latency_time_result()
-    d = defer.maybeDeferred(self._handler.get_latency_time, args.url)
+    d = defer.maybeDeferred(self._handler.get_latency_time, args.spiderid, args.url)
     d.addCallback(self.write_results_success_get_latency_time, result, seqid, oprot)
     return d
 
@@ -241,15 +246,19 @@ class get_seeds_args:
   """
   Attributes:
    - spiderid
+   - report
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.STRING, 'spiderid', None, None, ), # 1
+    None, # 2
+    (3, TType.STRUCT, 'report', (JobReport, JobReport.thrift_spec), None, ), # 3
   )
 
-  def __init__(self, spiderid=None,):
+  def __init__(self, spiderid=None, report=None,):
     self.spiderid = spiderid
+    self.report = report
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -265,6 +274,12 @@ class get_seeds_args:
           self.spiderid = iprot.readString();
         else:
           iprot.skip(ftype)
+      elif fid == 3:
+        if ftype == TType.STRUCT:
+          self.report = JobReport()
+          self.report.read(iprot)
+        else:
+          iprot.skip(ftype)
       else:
         iprot.skip(ftype)
       iprot.readFieldEnd()
@@ -278,6 +293,10 @@ class get_seeds_args:
     if self.spiderid is not None:
       oprot.writeFieldBegin('spiderid', TType.STRING, 1)
       oprot.writeString(self.spiderid)
+      oprot.writeFieldEnd()
+    if self.report is not None:
+      oprot.writeFieldBegin('report', TType.STRUCT, 3)
+      self.report.write(oprot)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -360,15 +379,18 @@ class get_seeds_result:
 class add_seeds_args:
   """
   Attributes:
+   - spiderid
    - pkg
   """
 
   thrift_spec = (
     None, # 0
-    (1, TType.STRUCT, 'pkg', (SeedsPackage, SeedsPackage.thrift_spec), None, ), # 1
+    (1, TType.STRING, 'spiderid', None, None, ), # 1
+    (2, TType.STRUCT, 'pkg', (SeedsPackage, SeedsPackage.thrift_spec), None, ), # 2
   )
 
-  def __init__(self, pkg=None,):
+  def __init__(self, spiderid=None, pkg=None,):
+    self.spiderid = spiderid
     self.pkg = pkg
 
   def read(self, iprot):
@@ -381,6 +403,11 @@ class add_seeds_args:
       if ftype == TType.STOP:
         break
       if fid == 1:
+        if ftype == TType.STRING:
+          self.spiderid = iprot.readString();
+        else:
+          iprot.skip(ftype)
+      elif fid == 2:
         if ftype == TType.STRUCT:
           self.pkg = SeedsPackage()
           self.pkg.read(iprot)
@@ -396,8 +423,12 @@ class add_seeds_args:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
     oprot.writeStructBegin('add_seeds_args')
+    if self.spiderid is not None:
+      oprot.writeFieldBegin('spiderid', TType.STRING, 1)
+      oprot.writeString(self.spiderid)
+      oprot.writeFieldEnd()
     if self.pkg is not None:
-      oprot.writeFieldBegin('pkg', TType.STRUCT, 1)
+      oprot.writeFieldBegin('pkg', TType.STRUCT, 2)
       self.pkg.write(oprot)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
@@ -463,15 +494,18 @@ class add_seeds_result:
 class get_latency_time_args:
   """
   Attributes:
+   - spiderid
    - url
   """
 
   thrift_spec = (
     None, # 0
-    (1, TType.STRING, 'url', None, None, ), # 1
+    (1, TType.STRING, 'spiderid', None, None, ), # 1
+    (2, TType.STRING, 'url', None, None, ), # 2
   )
 
-  def __init__(self, url=None,):
+  def __init__(self, spiderid=None, url=None,):
+    self.spiderid = spiderid
     self.url = url
 
   def read(self, iprot):
@@ -484,6 +518,11 @@ class get_latency_time_args:
       if ftype == TType.STOP:
         break
       if fid == 1:
+        if ftype == TType.STRING:
+          self.spiderid = iprot.readString();
+        else:
+          iprot.skip(ftype)
+      elif fid == 2:
         if ftype == TType.STRING:
           self.url = iprot.readString();
         else:
@@ -498,8 +537,12 @@ class get_latency_time_args:
       oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
       return
     oprot.writeStructBegin('get_latency_time_args')
+    if self.spiderid is not None:
+      oprot.writeFieldBegin('spiderid', TType.STRING, 1)
+      oprot.writeString(self.spiderid)
+      oprot.writeFieldEnd()
     if self.url is not None:
-      oprot.writeFieldBegin('url', TType.STRING, 1)
+      oprot.writeFieldBegin('url', TType.STRING, 2)
       oprot.writeString(self.url)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()

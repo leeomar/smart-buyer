@@ -165,15 +165,18 @@ class SeedsPackage:
   """
   Attributes:
    - ID
+   - seeds
   """
 
   thrift_spec = (
     None, # 0
     (1, TType.STRING, 'ID', None, None, ), # 1
+    (2, TType.LIST, 'seeds', (TType.STRUCT,(Seed, Seed.thrift_spec)), None, ), # 2
   )
 
-  def __init__(self, ID=None,):
+  def __init__(self, ID=None, seeds=None,):
     self.ID = ID
+    self.seeds = seeds
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -189,6 +192,17 @@ class SeedsPackage:
           self.ID = iprot.readString();
         else:
           iprot.skip(ftype)
+      elif fid == 2:
+        if ftype == TType.LIST:
+          self.seeds = []
+          (_etype3, _size0) = iprot.readListBegin()
+          for _i4 in xrange(_size0):
+            _elem5 = Seed()
+            _elem5.read(iprot)
+            self.seeds.append(_elem5)
+          iprot.readListEnd()
+        else:
+          iprot.skip(ftype)
       else:
         iprot.skip(ftype)
       iprot.readFieldEnd()
@@ -202,6 +216,123 @@ class SeedsPackage:
     if self.ID is not None:
       oprot.writeFieldBegin('ID', TType.STRING, 1)
       oprot.writeString(self.ID)
+      oprot.writeFieldEnd()
+    if self.seeds is not None:
+      oprot.writeFieldBegin('seeds', TType.LIST, 2)
+      oprot.writeListBegin(TType.STRUCT, len(self.seeds))
+      for iter6 in self.seeds:
+        iter6.write(oprot)
+      oprot.writeListEnd()
+      oprot.writeFieldEnd()
+    oprot.writeFieldStop()
+    oprot.writeStructEnd()
+
+  def validate(self):
+    if self.seeds is None:
+      raise TProtocol.TProtocolException(message='Required field seeds is unset!')
+    return
+
+
+  def __repr__(self):
+    L = ['%s=%r' % (key, value)
+      for key, value in self.__dict__.iteritems()]
+    return '%s(%s)' % (self.__class__.__name__, ', '.join(L))
+
+  def __eq__(self, other):
+    return isinstance(other, self.__class__) and self.__dict__ == other.__dict__
+
+  def __ne__(self, other):
+    return not (self == other)
+
+class JobReport:
+  """
+  Attributes:
+   - work_time
+   - idle_time
+   - fail_url_num
+   - crawled_url_num
+   - crawled_page_size
+  """
+
+  thrift_spec = (
+    None, # 0
+    (1, TType.I32, 'work_time', None, 0, ), # 1
+    (2, TType.I32, 'idle_time', None, 0, ), # 2
+    (3, TType.I32, 'crawled_url_num', None, 0, ), # 3
+    (4, TType.I32, 'fail_url_num', None, 0, ), # 4
+    (5, TType.I32, 'crawled_page_size', None, 0, ), # 5
+  )
+
+  def __init__(self, work_time=thrift_spec[1][4], idle_time=thrift_spec[2][4], fail_url_num=thrift_spec[4][4], crawled_url_num=thrift_spec[3][4], crawled_page_size=thrift_spec[5][4],):
+    self.work_time = work_time
+    self.idle_time = idle_time
+    self.fail_url_num = fail_url_num
+    self.crawled_url_num = crawled_url_num
+    self.crawled_page_size = crawled_page_size
+
+  def read(self, iprot):
+    if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
+      fastbinary.decode_binary(self, iprot.trans, (self.__class__, self.thrift_spec))
+      return
+    iprot.readStructBegin()
+    while True:
+      (fname, ftype, fid) = iprot.readFieldBegin()
+      if ftype == TType.STOP:
+        break
+      if fid == 1:
+        if ftype == TType.I32:
+          self.work_time = iprot.readI32();
+        else:
+          iprot.skip(ftype)
+      elif fid == 2:
+        if ftype == TType.I32:
+          self.idle_time = iprot.readI32();
+        else:
+          iprot.skip(ftype)
+      elif fid == 4:
+        if ftype == TType.I32:
+          self.fail_url_num = iprot.readI32();
+        else:
+          iprot.skip(ftype)
+      elif fid == 3:
+        if ftype == TType.I32:
+          self.crawled_url_num = iprot.readI32();
+        else:
+          iprot.skip(ftype)
+      elif fid == 5:
+        if ftype == TType.I32:
+          self.crawled_page_size = iprot.readI32();
+        else:
+          iprot.skip(ftype)
+      else:
+        iprot.skip(ftype)
+      iprot.readFieldEnd()
+    iprot.readStructEnd()
+
+  def write(self, oprot):
+    if oprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and self.thrift_spec is not None and fastbinary is not None:
+      oprot.trans.write(fastbinary.encode_binary(self, (self.__class__, self.thrift_spec)))
+      return
+    oprot.writeStructBegin('JobReport')
+    if self.work_time is not None:
+      oprot.writeFieldBegin('work_time', TType.I32, 1)
+      oprot.writeI32(self.work_time)
+      oprot.writeFieldEnd()
+    if self.idle_time is not None:
+      oprot.writeFieldBegin('idle_time', TType.I32, 2)
+      oprot.writeI32(self.idle_time)
+      oprot.writeFieldEnd()
+    if self.crawled_url_num is not None:
+      oprot.writeFieldBegin('crawled_url_num', TType.I32, 3)
+      oprot.writeI32(self.crawled_url_num)
+      oprot.writeFieldEnd()
+    if self.fail_url_num is not None:
+      oprot.writeFieldBegin('fail_url_num', TType.I32, 4)
+      oprot.writeI32(self.fail_url_num)
+      oprot.writeFieldEnd()
+    if self.crawled_page_size is not None:
+      oprot.writeFieldBegin('crawled_page_size', TType.I32, 5)
+      oprot.writeI32(self.crawled_page_size)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()
@@ -229,10 +360,10 @@ class ServerError(TException):
 
   thrift_spec = (
     None, # 0
-    (1, TType.STRING, 'reason', None, None, ), # 1
+    (1, TType.STRING, 'reason', None, "unkown server internal error", ), # 1
   )
 
-  def __init__(self, reason=None,):
+  def __init__(self, reason=thrift_spec[1][4],):
     self.reason = reason
 
   def read(self, iprot):
@@ -292,10 +423,10 @@ class RequestError(TException):
 
   thrift_spec = (
     None, # 0
-    (1, TType.STRING, 'reason', None, None, ), # 1
+    (1, TType.STRING, 'reason', None, "illeage request", ), # 1
   )
 
-  def __init__(self, reason=None,):
+  def __init__(self, reason=thrift_spec[1][4],):
     self.reason = reason
 
   def read(self, iprot):

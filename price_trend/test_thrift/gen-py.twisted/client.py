@@ -35,6 +35,7 @@ from thrift.protocol import TBinaryProtocol
 
 @inlineCallbacks
 def main(client):
+    print 'got client'
     user = yield client.retrieve(11)
     print user
 
@@ -45,7 +46,7 @@ if __name__ == '__main__':
                       TTwisted.ThriftClientProtocol,
                       UserStorage.Client,
                       TBinaryProtocol.TBinaryProtocolFactory(),
-                      ).connectTCP("127.0.0.1", 9090)
+                      ).connectTCP("127.0.0.1", 9095)
     d.addCallback(lambda conn: conn.client)
     d.addCallback(main)
 
