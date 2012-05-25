@@ -15,13 +15,15 @@ from thrift.transport import TTwisted
 from thrift.protocol import TBinaryProtocol
 from thrift.server import TServer
 
-from struct_format import *
+from SeedsService import SeedsService
 
+from struct_format import *
 from log import log
 
 class SchedulerHandler:
     implements(Scheduler.Iface)
-    def __init__(self):
+    def __init__(self, seed_service):
+        self.seed_serive = seed_service
         log.info('init SchedulerHandler')
 
     def ping(self):
@@ -38,9 +40,8 @@ class SchedulerHandler:
         pass
 
     def add_seeds(self, clientid, pkg):
-        log.debug("got seed package[%s] from %s" % (clientid, pkg.ID))
-        print format_seedspackage(pkg)
-        print 'add seeds'
+        log.debug("got %s" % (format_seedspackage(pkg)))
+        self.seed_serive.add_seeds(clientid, pkg)
         return
 
     def get_latency_time(self, spiderid, url):
@@ -48,7 +49,9 @@ class SchedulerHandler:
         return 0
 
 if __name__ == '__main__':
-    handler = SchedulerHandler()
+    seed_servie = SeedsService()
+
+    handler = SchedulerHandler(seed_servie)
     processor = Scheduler.Processor(handler)
     pfactory = TBinaryProtocol.TBinaryProtocolFactory()
     server = reactor.listenTCP(9090,

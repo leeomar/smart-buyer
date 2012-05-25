@@ -2,7 +2,7 @@
 import time
 import Queue
 from utils import get_domain
-from scrapy.utils.reactor import CallLaterOnce
+from reactor import CallLaterOnce
 
 '''
 seed file: 
