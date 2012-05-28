@@ -8,6 +8,7 @@ struct Seed {
     7: i32 cur_xdepth = 0,
     8: i32 priority,
     9: i32 crawl_interval = 10,
+    10: i32 seed_frequency = 0,
 }
 
 struct SeedsPackage {

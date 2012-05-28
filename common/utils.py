@@ -53,7 +53,7 @@ def get_domain(url):
     """
     TLDs = ('cn',) # 'jp', 'uk', 'tw', 'us'
     host = urlparse.urlparse(url).hostname
-
+    print host
     if host:
         if ip_pattern.match(host):
             return host
@@ -71,6 +71,8 @@ def get_domain(url):
             return '.'.join(host.split('.')[-2:]+[suffix,])
         else:
             return '.'.join(host.split('.')[-2:])
+    else:
+        raise Exception('fail parse hostname from %s' % url)
 
 def canonicalize_url(url, keep_blank_values=True, keep_fragments=False, \
         encoding=None):

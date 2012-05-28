@@ -26,6 +26,7 @@ def parse_line(line):
         seed.max_xdepth = dic.get('max_xdepth', 0)
         seed.priority = dic.get('priority', 0)
         seed.crawl_interval = dic.get('crawl_interval', 10)
+        seed.seed_frequency = dic.get('seed_frequency', 0)
         return seed
     except Exception, e:
         print e

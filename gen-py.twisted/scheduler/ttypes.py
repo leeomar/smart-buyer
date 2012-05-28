@@ -27,6 +27,7 @@ class Seed:
    - cur_xdepth
    - priority
    - crawl_interval
+   - seed_frequency
   """
 
   thrift_spec = (
@@ -40,9 +41,10 @@ class Seed:
     (7, TType.I32, 'cur_xdepth', None, 0, ), # 7
     (8, TType.I32, 'priority', None, None, ), # 8
     (9, TType.I32, 'crawl_interval', None, 10, ), # 9
+    (10, TType.I32, 'seed_frequency', None, 0, ), # 10
   )
 
-  def __init__(self, url=None, content_group=None, pl_group=None, max_idepth=thrift_spec[4][4], max_xdepth=thrift_spec[5][4], cur_idepth=thrift_spec[6][4], cur_xdepth=thrift_spec[7][4], priority=None, crawl_interval=thrift_spec[9][4],):
+  def __init__(self, url=None, content_group=None, pl_group=None, max_idepth=thrift_spec[4][4], max_xdepth=thrift_spec[5][4], cur_idepth=thrift_spec[6][4], cur_xdepth=thrift_spec[7][4], priority=None, crawl_interval=thrift_spec[9][4], seed_frequency=thrift_spec[10][4],):
     self.url = url
     self.content_group = content_group
     self.pl_group = pl_group
@@ -52,6 +54,7 @@ class Seed:
     self.cur_xdepth = cur_xdepth
     self.priority = priority
     self.crawl_interval = crawl_interval
+    self.seed_frequency = seed_frequency
 
   def read(self, iprot):
     if iprot.__class__ == TBinaryProtocol.TBinaryProtocolAccelerated and isinstance(iprot.trans, TTransport.CReadableTransport) and self.thrift_spec is not None and fastbinary is not None:
@@ -107,6 +110,11 @@ class Seed:
           self.crawl_interval = iprot.readI32();
         else:
           iprot.skip(ftype)
+      elif fid == 10:
+        if ftype == TType.I32:
+          self.seed_frequency = iprot.readI32();
+        else:
+          iprot.skip(ftype)
       else:
         iprot.skip(ftype)
       iprot.readFieldEnd()
@@ -152,6 +160,10 @@ class Seed:
     if self.crawl_interval != None:
       oprot.writeFieldBegin('crawl_interval', TType.I32, 9)
       oprot.writeI32(self.crawl_interval)
+      oprot.writeFieldEnd()
+    if self.seed_frequency != None:
+      oprot.writeFieldBegin('seed_frequency', TType.I32, 10)
+      oprot.writeI32(self.seed_frequency)
       oprot.writeFieldEnd()
     oprot.writeFieldStop()
     oprot.writeStructEnd()

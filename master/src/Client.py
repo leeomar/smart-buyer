@@ -4,6 +4,7 @@ import sys
 sys.path.append('../../gen-py.twisted')
 
 from scheduler import Scheduler
+from scheduler.ttypes import JobReport
 
 from twisted.internet.defer import inlineCallbacks
 from twisted.internet import reactor
@@ -21,8 +22,14 @@ def main(client):
     print 'client run'
     yield client.ping()
 
-    result = yield client.get_latency_time('spider001', 'http://www.sina.cn')
-    print result
+    jobreport = JobReport()
+    jobreport.spiderid = 'spider001'
+    pkg = yield client.get_seeds(jobreport.spiderid, jobreport)
+    print pkg
+
+    for seed in pkg.seeds:
+        wait = yield client.get_latency_time('spider001', seed.url)
+        print '%s waits %s seconds' % (seed.url, wait)
 
     reactor.stop()
 

@@ -12,11 +12,12 @@ def assert_type(instance, expect_type):
 
 def format_seed(seed):
     assert_type(seed, Seed)
-    return "Seed[url:%s, content_group:%s, pl_group:%s, max_idepth:%s, max_xdepth:%s, cur_idepth:%s, cur_xdepth:%s, priority:%s, crawl_interval:%s]" \
+    return "Seed[url:%s, content_group:%s, pl_group:%s, max_idepth:%s, max_xdepth:%s, cur_idepth:%s, cur_xdepth:%s, priority:%s, crawl_interval:%s, seed_frequency:%s]" \
         % (seed.url, seed.content_group, seed.pl_group, 
             seed.max_xdepth, seed.max_xdepth, 
             seed.cur_idepth, seed.cur_xdepth,
-            seed.priority, seed.crawl_interval)
+            seed.priority, seed.crawl_interval,
+            seed.seed_frequency)
 
 def format_seedspackage(pkg):
     assert_type(pkg, SeedsPackage)

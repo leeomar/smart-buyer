@@ -1,91 +1,76 @@
 #/bin/python
+import sys
+sys.path.append('../../gen-py.twisted')
+sys.path.append('../../common')
+
 import time
-import Queue
+from scheduler.ttypes import JobReport
 from utils import get_domain
-from reactor import CallLaterOnce
+from log import log
+from GlobalInfo import GlobalInfo
 
-'''
-seed file: 
-{
-    host1:list<seed>,
-    host2:list<seed>
-}
-'''
-class Host(object):
-    default_crawl_interval = 1
-
-    def __init__(self, host,):
-        self.name = None
-        self.priority = 0
-        self.last_crawl_time = None
-        self.crawl_interval = Host.default_crawl_interval
-        
-        self.total_url_num = 0
-        self.crawled_url_num = 0
-        self.pending_url_num = 0
-        self.running_url_num = 0
-        #self.pending_urls = Queue.PriorityQueue() 
-
-class SeedsService:
+class MemoryBasedSeedsService:
     SEED_PKG_SIZE = 5
     
     def __init__(self):
         self.pending_seeds = []
-        self.candidate_seeds = []
-        self.host_info = {}
+        self.global_info = GlobalInfo() 
 
-        self.load_seeds_call= CallLaterOnce(self._load_seeds)
-        self.load_seeds_call.schedule()
+    @property
+    def seeds_num(self):
+        return len(self.pending_seeds)
 
-    def get_seeds(self, spiderid):
-        num = 0
-        while num < self.SEED_PKG_SIZE \
-            and len(self.pending_seeds) > 0:
-            num += 1
-            yield self.pending_seeds[0]
-            del self.pending_seeds[0]
+    @property
+    def hosts(self):
+        return self.global_info.hosts
+
+    def get_seeds(self, spiderid, jobreport):
+        total = len(self.pending_seeds)
+        if total > self.SEED_PKG_SIZE:
+            num = self.SEED_PKG_SIZE
+        else:
+            num = total
+        
+        results = self.pending_seeds[:num]
+        self.pending_seeds = self.pending_seeds[num:]
+        self.global_info.update_spider_report(jobreport, 
+            True if num > 0 else False)
+
+        log.debug("return %s seeds" % num)
+        return results 
 
     def add_seeds(self, clientid, pkg):
-        for seed in pkg:
-            self.candidate_seeds.append(seed)
+        for seed in pkg.seeds:
+            self.pending_seeds.append(seed)
+            self.global_info.add_seed(seed)
+            log.debug("add %s" % seed)
+        log.info("add %s seeds from %s" % (len(pkg.seeds), clientid))
 
     def get_latency_time(self, url):
         domain = get_domain(url) 
-        hostinfo = self.host_info.get(domain, None)
-        left_time = time.time() - hostinfo.last_crawl_time - \
-            hostinfo.crawl_interval
+        hostinfo = self.hosts[domain]
+        print hostinfo
 
-        if left_time > 0:
+        if hostinfo.last_crawl_time is None:
             hostinfo.last_crawl_time = time.time()
-            return 0 
+            return 0
         else:
-            return -left_time
+            left_time = time.time() - hostinfo.last_crawl_time - \
+                hostinfo.crawl_interval
 
-    def _caculate_url_priority(self, seed):
-        domain = get_domain(seed.url)
-        priority = self.host_info.get(domain, 0) 
-        url_num = self.hostinfo_in_queue.get(domain, 0) 
-        import math
-        return int(1000*(priority + 1/(1+math.log(1+url_num))))
+            print "left: ", left_time
+            if left_time > 0:
+                hostinfo.last_crawl_time = time.time()
+                return 0 
+            else:
+                return -left_time
 
-    def _load_seeds(self, force=False):
-        if force or len(self.candidate_seeds) > 100:
-            pq = Queue.PriorityQueue()
-            self.hostinfo_in_queue = {}
-            for i in range(0, len(self.candidate_seeds)):
-                seed = self.candidate_seeds[i]
-                priority = self._caculate_url_priority(seed)
-                pq.put((priority, seed))
+    def status(self):
+        return "unsupported yet"
 
-                domain = get_domain(seed.url)
-                self.hostinfo_in_queue[domain] = \
-                    self.hostinfo_in_queue.get(domain, 0) + 1
-                del self.candidate_seeds[i]
+if __name__ == '__main__':
+    service = MemoryBasedSeedsService()
+    report = JobReport()
+    report.spiderid = 'test001'
 
-            while pq.empty() is False:
-                (priority, seed) = pq.pop()
-                self.pending_seeds.append(seed)
-            pq = None
-            self.hostinfo_in_queue = None
-        else:
-            self.load_seeds_call.schedule(5)
+    service.get_seeds(report.spiderid, report)
