@@ -33,12 +33,17 @@ def main(client):
 
     reactor.stop()
 
+def close(obj):
+    print obj
+    reactor.stop()
+
 if __name__ == '__main__':
     d = ClientCreator(reactor,
         TTwisted.ThriftClientProtocol,
         Scheduler.Client,
         TBinaryProtocol.TBinaryProtocolFactory(),
-        ).connectTCP("127.0.0.1", 9090)
+        ).connectTCP("127.0.0.1", 9090, timeout=30)
     d.addCallback(lambda conn: conn.client)
     d.addCallback(main)
+    d.addErrback(close)
     reactor.run()
