@@ -1,10 +1,7 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-from price_trend.utils.url_util import get_uid, get_domain
-import time
-
-from price_trend.utils.datetime_util import is_same_day
+from slave.utils.datetimeutil import is_same_day
 
 class GoodsItem:
     

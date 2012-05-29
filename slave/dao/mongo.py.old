@@ -12,6 +12,7 @@ dbs = {
     'okbuy': [client.price_okbuy, client.price_okbuy_all],
     'letao': [client.price_letao, client.price_letao_all],
 }
+
 class CPriceTrendDao:
     @staticmethod
     #def insert(key, url, price, insert_time, shop):

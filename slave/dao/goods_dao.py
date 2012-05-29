@@ -1,9 +1,9 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-from price_trend.dao.mongo_client import MongoClient
-from price_trend.utils.url_util import get_uid, get_domain
-from price_trend.dao.goods_item import GoodsItem
+from slave.dao.mongoclient import MongoClient
+from slave.utils.url_util import get_uid, get_domain
+from slave.dao.item import GoodsItem
 import time
     
 class GoodsDAO:
@@ -14,7 +14,7 @@ class GoodsDAO:
 
     def get(self, url, collection_name=None):
         uid = get_uid(url)
-        dbrecord = self.dbclient.find_one(pk=uid, collection_name)
+        dbrecord = self.dbclient.find_one(uid, collection_name)
         if dbrecord:
             goods_item = GoodsItem()
             goods_item.oid = str(dbrecord['_id'])
@@ -36,18 +36,18 @@ class GoodsDAO:
         crawl_time = int(time.time()) 
         goods_item = self.get(url, collection_name)
         if goods_item:
-            self.dbclient.insert_field(pk=uid, collection_name, 
+            self.dbclient.insert_field(uid, collection_name, 
                 data=(price, crawl_time),)
             if price <= goods_item.get_bottom_price():
-                self.dbclient.update_field(pk=uid, collection_name, 
+                self.dbclient.update_field(uid, collection_name, 
                    bottom_price=(price, crawl_time))
-        else if not goods_item.duplicate_price_item(price, crawl_time):
+        elif not goods_item.duplicate_price_item(price, crawl_time):
             self.dbclient.insert(
                 {   "url":url, 'uid': uid,  "name":name, 
                     "cat":cat, "data":[(price, crawl_time)], 
                     "bottom_price":(price, crawl_time), 
                     "domain=":domain
-                 }, pk=uid, collection_name)
+                 }, uid, collection_name)
         else:
             #TODO log here
             pass

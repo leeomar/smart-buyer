@@ -3,7 +3,8 @@
 
 from pymongo.connection import Connection
 from pymongo import DESCENDING, ASCENDING
-from pymongo import objectid
+#from pymongo import objectid
+from bson.objectid import ObjectId
 
 class MongoClient:
     PRIMARY_KEY = 'uid'
@@ -29,7 +30,7 @@ class MongoClient:
         return self.db[collection_name]
     
     def get_objectid(self, key):
-        return objectid.ObjectId(str(key))
+        return ObjectId(str(key))
 
     def insert(self, dict_obj, pk=None, collection_name=None):
         if pk is not None:

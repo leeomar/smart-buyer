@@ -3,13 +3,14 @@
 
 from scrapy import log
 from scrapy.utils.misc import load_object
-from price_trend.logable_object import LogableObject
+from slave.logobj import LogableObject
+from slave.parsers.basicparser import BasicLinkInfo, ReturnStatus
 
-class ParserManager(LogableObject):
-    component_name = 'spider parser'
+class ParserMiddlewareManager(LogableObject):
+    component_name = 'spider parser middleware manager'
 
     def __init__(self, parsers, spider=None):
-        super(ParserManager, self).__init__(spider)
+        super(ParserMiddlewareManager, self).__init__(spider)
         self.parsers = parsers
 
     @classmethod
@@ -26,10 +27,11 @@ class ParserManager(LogableObject):
             parsers.append(parser_obj)
 
         enabled = [x.__class__.__name__ for x in parsers]
-        self.log("Enabled %ss: %s" % (cls.component_name, ", ".join(enabled)), \
+        log.msg("Enabled %ss: %s" % (cls.component_name, ", ".join(enabled)), \
            level=log.DEBUG)
         return cls(parsers, spider)
 
+    """
     def get_parser(self, parser_cls):
         print self.parsers
         for parser in self.parsers:
@@ -38,7 +40,7 @@ class ParserManager(LogableObject):
                 return parser
 
         return None
-
+    """
     def process_response(self, response, spider):
         basic_link_info = BasicLinkInfo.from_response(response)
         self.log("%s" % basic_link_info, level=log.DEBUG)

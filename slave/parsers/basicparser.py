@@ -1,18 +1,9 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-import time
-from scrapy import log
-from scrapy.stats import stats
-from scrapy.utils.url import urljoin_rfc
-from scrapy.selector import XmlXPathSelector
-from scrapy.utils.python import str_to_unicode
-from scrapy.http.response.xml import XmlResponse
-from scrapy.utils.python import str_to_unicode, unicode_to_str
 from scrapy.http.response.text import TextResponse
-
-from price_trend.logable_object import LogableObject
-from price_trend.utils.url_util import get_domain, get_uid
+from slave.logobj import LogableObject
+from slave.utils.url_util import get_domain, get_uid
 from urlparse import urlparse
 
 class ReturnStatus(object):
@@ -57,7 +48,6 @@ class BasicLinkInfo(object):
             cur_xdepth, max_xdepth, content_group, pl_group, source, url)
 
 class BasicParser(LogableObject):
-
     def __init__(self, plg_mapping):
         self.response = None
         self.basic_link_info = None
@@ -71,7 +61,7 @@ class BasicParser(LogableObject):
 
     def init_context(self, response, basic_link_info, spider):
         self.response = response
-        self.basic_link_info = basic_link_info
+        self.basic_link_info = basic_link_info#BasicLinkInfo.from_response(response) 
         self.spider = spider
 
     '''@Interface:
@@ -95,16 +85,7 @@ class BasicParser(LogableObject):
         return ReturnStatus.stop_it
 
     def process(self):
-        self.save()
-        self.expansion()
+        pass
     
     def get_collection_name(self):
         return self.plg_mapping.get(self.basic_link_info.pl_group)
-
-    def expansion(self):
-        if self.basic_link_info.max_idepth < self.basic_link_info.cur_idepth:
-            return
-        pass
-
-    #def log(self, msg, level=log.DEBUG):
-    #    log.msg(msg, level=level, spider=self.spider)
