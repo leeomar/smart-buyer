@@ -1,9 +1,9 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-from slave.dao.mongoclient import MongoClient
-from slave.utils.url_util import get_uid, get_domain
-from slave.dao.item import GoodsItem
+from crawler.dao.mongoclient import MongoClient
+from crawler.utils.url_util import get_uid, get_domain
+from crawler.dao.item import GoodsItem
 import time
     
 class GoodsDAO:

@@ -3,8 +3,8 @@
 from scrapy.spider import BaseSpider
 from scrapy.conf import settings
 
-from slave.parsers.parsermw import ParserMiddlewareManager
-from slave.dao.goods_dao import GoodsDAO
+from crawler.parsers.parsermw import ParserMiddlewareManager
+from crawler.dao.goods_dao import GoodsDAO
 
 class BasicSpider(BaseSpider):
     name = 'basicspider'

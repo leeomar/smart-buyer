@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from scrapy.http.response.text import TextResponse
-from slave.logobj import LogableObject
-from slave.utils.url_util import get_domain, get_uid
+from crawler.logobj import LogableObject
+from crawler.utils.url_util import get_domain, get_uid
 from urlparse import urlparse
 
 class ReturnStatus(object):

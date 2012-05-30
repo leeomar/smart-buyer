@@ -7,18 +7,18 @@
 #
 
 LOG_FILE = 'spider.log'
-BOT_NAME = 'slave'
+BOT_NAME = 'crawler'
 BOT_VERSION = '1.0'
 SELECTORS_BACKEND = "lxml"
 
-SPIDER_MODULES = ['slave.spiders']
-NEWSPIDER_MODULE = 'slave.spiders'
-DEFAULT_ITEM_CLASS = 'slave.dao.goods_dao.GoodsItem'
+SPIDER_MODULES = ['crawler.spiders']
+NEWSPIDER_MODULE = 'crawler.spiders'
+DEFAULT_ITEM_CLASS = 'crawler.dao.goods_dao.GoodsItem'
 #USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
 USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'
 
 DOWNLOADER_MIDDLEWARES = {
-    'slave.middlewares.hostpolite.HostPoliteCtrlMiddleware' : 200,
+    'crawler.middlewares.hostpolite.HostPoliteCtrlMiddleware' : 200,
     'scrapy.contrib.downloadermiddleware.redirect.RedirectMiddleware' : 100,
     'scrapy.contrib.downloadermiddleware.stats.DownloaderStats' : 300,
     'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware' : 500,
@@ -26,12 +26,12 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 EXTENSIONS = {
-    'slave.client.masterclient.MasterClient': 10,
+    'crawler.client.masterclient.MasterClient': 10,
     'scrapy.contrib.resolver.CachingResolver': 20,
 }
 
 SPIDER_PARSERS = {
-    "slave.parsers.buy360.Buy360Parser" : 0,
+    "crawler.parsers.buy360.Buy360Parser" : 0,
 }
 
 #persistence layer group Mapping

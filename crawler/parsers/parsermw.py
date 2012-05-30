@@ -3,8 +3,8 @@
 
 from scrapy import log
 from scrapy.utils.misc import load_object
-from slave.logobj import LogableObject
-from slave.parsers.basicparser import BasicLinkInfo, ReturnStatus
+from crawler.logobj import LogableObject
+from crawler.parsers.basicparser import BasicLinkInfo, ReturnStatus
 
 class ParserMiddlewareManager(LogableObject):
     component_name = 'spider parser middleware manager'

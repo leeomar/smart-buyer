@@ -1,7 +1,7 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-from slave.utils.datetimeutil import is_same_day
+from crawler.utils.datetimeutil import is_same_day
 
 class GoodsItem:
     

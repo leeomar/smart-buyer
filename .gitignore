@@ -1,2 +1,9 @@
 *.pyc
 *.log
+*.err
+*.pid
+logs
+egg
+dbs
+project.egg-info/*
+build/*

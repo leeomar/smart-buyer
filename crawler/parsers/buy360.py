@@ -1,7 +1,7 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-from slave.parsers.basicparser import BasicParser
+from crawler.parsers.basicparser import BasicParser
 
 class Buy360Parser(BasicParser):
     allow_content_group = '360buy_default'
