@@ -17,6 +17,7 @@ from scheduler.ttypes import JobReport
 from twisted.internet.defer import inlineCallbacks
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientCreator
+from twisted.internet import defer
 
 from thrift import Thrift
 from thrift.transport import TTwisted
@@ -28,20 +29,21 @@ class MasterClient(object):
         self.master_host = settings.get("MASTER_HOST")
         self.master_port = settings.get("MASTER_PORT")
         self.conn_timeout = settings.getint("DEFAULT_TIMEOUT", 30)
-        self.conn_defer = self.connect()
+        self.connect()
+        self.conn = None
         dispatcher.connect(self.handle_spider_idle, 
             signal=signals.spider_idle)
 
     def connect(self):
-        d = ClientCreator(reactor,
+        self.conn_defer = ClientCreator(reactor,
                 TTwisted.ThriftClientProtocol,
                 Scheduler.Client,
                 TBinaryProtocol.TBinaryProtocolFactory(),
             ).connectTCP(self.master_host, 
                 self.master_port, self.conn_timeout)
+        self.conn_defer.addCallback(self.set_connect)
         log.msg("prepare connect to Master[%s:%s]" % \
             (self.master_host, self.master_port))
-        return d
         #d.addCallback(self.set_connect)
         #d.addErrback(self.close_conn)
 
@@ -50,7 +52,7 @@ class MasterClient(object):
         self.client = conn.client
         log.msg("connect to Master[%s:%s]" % \
             (self.master_host, self.master_port))
-        return conn 
+        #self.conn_defer = None
 
     def close_conn(self, obj):
         log.msg('connect error, fail connect to Master[%s:%s]' % \
@@ -59,17 +61,13 @@ class MasterClient(object):
         self.client = None
         return obj
 
-    #inlineCallbacks
+    @defer.inlineCallbacks
     def get_seeds(self, conn):
-        log.msg('get seeds')
+        print conn, 'get seeds'
         jobreport = JobReport()
         jobreport.spiderid = 'spider001'
-        d = conn.client.get_seeds( \
+        pkg = yield conn.client.get_seeds( \
             jobreport.spiderid, jobreport)
-        d.addCallback(self.crawl_seeds)
-
-    def crawl_seeds(self, pkg):
-        print "crawl_seeds"
         for seed in pkg.seeds:
             req = self.make_request_from_seed(seed)
             #crawler.crawl(req, spider)
@@ -77,8 +75,6 @@ class MasterClient(object):
 
     def handle_spider_idle(self, spider):
         log.msg('%s idle' % spider.name)
-        time.sleep(5)
-        #self.conn_defer.addCallback(self.set_connect)
         self.conn_defer.addCallback(self.get_seeds)
         return DontCloseSpider
 
