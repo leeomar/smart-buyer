@@ -3,7 +3,7 @@
 *.err
 *.pid
 logs
-egg
+eggs
 dbs
 project.egg-info/*
 build/*
