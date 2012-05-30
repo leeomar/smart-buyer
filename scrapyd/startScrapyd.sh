@@ -5,5 +5,9 @@
 
 SCRAPY_HOME="/home/scrapyer/scrapy-0-12/"
 nohup twistd -ny $SCRAPY_HOME/extras/scrapyd.tac 1>logs/scrapyd.log 2>logs/scrapyd.err &
-echo "start scrapyd"
 sleep 1
+if [ -f twistd.pid ]; then
+    echo "start scrapyd[`cat twistd.pid`]"
+else
+    echo "start scrapyd"
+fi
