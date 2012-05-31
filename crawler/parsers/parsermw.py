@@ -4,13 +4,13 @@
 from scrapy import log
 from scrapy.utils.misc import load_object
 from crawler.logobj import LogableObject
-from crawler.parsers.basicparser import BasicLinkInfo, ReturnStatus
+from crawler.parsers.baseparser import BasicLinkInfo, ReturnStatus
 
 class ParserMiddlewareManager(LogableObject):
-    component_name = 'spider parser middleware manager'
+    component_name = 'parser plugin'
 
-    def __init__(self, parsers, spider=None):
-        super(ParserMiddlewareManager, self).__init__(spider)
+    def __init__(self, parsers):
+        super(ParserMiddlewareManager, self).__init__()
         self.parsers = parsers
 
     @classmethod
@@ -29,7 +29,7 @@ class ParserMiddlewareManager(LogableObject):
         enabled = [x.__class__.__name__ for x in parsers]
         log.msg("Enabled %ss: %s" % (cls.component_name, ", ".join(enabled)), \
            level=log.DEBUG)
-        return cls(parsers, spider)
+        return cls(parsers)
 
     """
     def get_parser(self, parser_cls):
@@ -46,7 +46,7 @@ class ParserMiddlewareManager(LogableObject):
         self.log("%s" % basic_link_info, level=log.DEBUG)
 
         ret_status = None
-        for parser in self.parser_manager.parsers:
+        for parser in self.parsers:
             ret_status = parser.parse(response, basic_link_info, spider)
             if ret_status == ReturnStatus.stop_it:
                 break

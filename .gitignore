@@ -2,6 +2,7 @@
 *.log
 *.err
 *.pid
+*.out
 logs
 eggs
 dbs

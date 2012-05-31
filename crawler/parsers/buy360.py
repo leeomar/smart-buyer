@@ -1,19 +1,13 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-from crawler.parsers.basicparser import BasicParser
+from crawler.parsers.baseparser import BaseParser
 
-class Buy360Parser(BasicParser):
-    allow_content_group = '360buy_default'
-
-    def conditon_permit(self, response, basic_link_info, spider):
-        if basic_link_info.content_group == Buy360Parser.allow_content_group:
-            return True
-        else:
-            return False
+class Buy360Parser(BaseParser):
+    ALLOW_CGS =['buy360', ]
 
     def process(self):
-        pass
+        self.log('got %s' % self.response.url)
 
     #http://www.360buy.com/allSort.aspx
     #no need to crawl following categories

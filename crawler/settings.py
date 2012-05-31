@@ -14,6 +14,7 @@ SELECTORS_BACKEND = "lxml"
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 DEFAULT_ITEM_CLASS = 'crawler.dao.goods_dao.GoodsItem'
+SPIDER_MANAGER_CLASS = 'crawler.extensions.spidermanager.MySpiderManager'
 #USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
 USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'
 
@@ -26,7 +27,7 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 EXTENSIONS = {
-    'crawler.client.masterclient.MasterClient': 10,
+    'crawler.extensions.masterclient.MasterClient': 0,
     'scrapy.contrib.resolver.CachingResolver': 20,
 }
 
