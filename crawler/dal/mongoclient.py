@@ -5,6 +5,7 @@ from pymongo.connection import Connection
 from pymongo import DESCENDING, ASCENDING
 #from pymongo import objectid
 from bson.objectid import ObjectId
+from scrapy import log
 
 class MongoClient:
     PRIMARY_KEY = 'uid'
@@ -17,6 +18,8 @@ class MongoClient:
         self.dbclient = Connection(host, port)
         self.db = self.dbclient[dbname]
         self.default_collection_name = default_collection_name
+        log.msg("connect to mongo[%s:%s], db:%s, collection:%s"\
+            %(host, port, dbname, default_collection_name))
         return self
 
     def create_index(self, feild_name, ascending=True, collection_name=None): 
@@ -36,7 +39,7 @@ class MongoClient:
         if pk is not None:
             dict_obj[MongoClient.PRIMARY_KEY] = pk 
         self.get_collection(collection_name).insert(dict_obj)
-        #return str(dict_obj[MongoClient.OBJECTID_KEY])
+        log.msg('insert %s, collection:%s' % (dict_obj, collection_name))
         return dict_obj
     
     def insert_field(self, pk, collection_name=None, **field_value_pairs):
@@ -53,7 +56,9 @@ class MongoClient:
     
     def find_one(self, pk, collection_name=None):
         collection = self.get_collection(collection_name)
-        return collection.find_one({MongoClient.PRIMARY_KEY : pk})
+        result = collection.find_one({MongoClient.PRIMARY_KEY : pk})
+        log.msg('get %s from %s' % (result, collection_name))
+        return result
 
     def find(self, collection_name=None, **field_value_pairs):
         collection = self.get_collection(collection_name)

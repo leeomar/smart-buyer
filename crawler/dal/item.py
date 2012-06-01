@@ -29,7 +29,7 @@ class GoodsItem:
         self.name=None
         self.cat=None
         self.data={}
-        self.bottom_price={}
+        self.bottom_price=()
         self.domain=None
 
     def get_price(self, idx):
@@ -38,6 +38,16 @@ class GoodsItem:
     def get_time(self, idx):
         return self.data[idx][1]
 
+    def add_price(self, price, crawl_time):
+        if self.duplicate_price_item(price, crawl_time):
+            return False
+
+        self.data.append((price, crawl_time))
+        if price < self.bottom_price[0]:
+            self.bottom_price = (price, crawl_time)
+
+        return True
+            
     def duplicate_price_item(self, price, crawl_time):
         last = -1
         if len(self.data) > 0 and \

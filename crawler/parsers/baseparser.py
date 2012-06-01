@@ -3,9 +3,12 @@
 
 from scrapy.http.response.text import TextResponse
 from crawler.logobj import LogableObject
-from crawler.utils.url_util import get_domain, get_uid
+from crawler.utils.url import get_domain, get_uid
 from urlparse import urlparse
 from scrapy.conf import settings
+from crawler.utils.unicode import stringPartQ2B
+from scrapy.project import crawler
+from scrapy.http import Request
 
 class ReturnStatus(object):
     stop_it = 0
@@ -29,9 +32,9 @@ class BasicLinkInfo(object):
         self.host = urlparse(self.url).hostname
 
     def __str__(self):
-        return 'URL[%s], Host[%s], Int_Dep[%d/%d], Ext_Dep[%d/%d],' \
+        return 'URL[%s], Host[%s], Domain[%s], Int_Dep[%d/%d], Ext_Dep[%d/%d],' \
             ' Content_Group[%s], Pl_Group[%s], Source[%s]'\
-            % (self.url, self.host, self.cur_idepth,
+            % (self.url, self.host, self.domain, self.cur_idepth,
             self.max_idepth, self.cur_xdepth, self.max_xdepth, 
             self.content_group, self.pl_group, self.source)
     
@@ -56,6 +59,7 @@ class BaseParser(LogableObject):
         self.response = None
         self.basic_link_info = None
         self.plg_mapping = settings.get("PLG_MAPPING") 
+        self.tmpfile_dir = settings.get("TMP_FILE_DIR")
     
     def init_context(self, response, basic_link_info, spider):
         self.response = response
@@ -91,3 +95,27 @@ class BaseParser(LogableObject):
     
     def get_collection_name(self):
         return self.plg_mapping.get(self.basic_link_info.pl_group)
+
+    def encode(self, text, tencoding='utf-8'):
+        if not isinstance(text, unicode):
+            raise Exception('text must be unicode, get %s' % type(text))
+        utext = stringPartQ2B(text)
+        return utext.encode(tencoding)
+
+    def decode(self, text, encoding=None):
+        if not isinstance(text, str):
+            raise Exception('text must be str, get %s' % type(text))
+        if encoding is None:
+            encoding = self.response.encoding
+        return text.decode(encoding)
+
+    def crawl(self, request):
+        crawler.engine.crawl(request, self.spider)
+        self.log("craw request:%s, refer:%s" % (request.url, self.response.url))
+
+    def make_request_from_response(self, url, **metakws):
+        meta = self.response.meta
+        for key in metakws:
+            meta[key] = metakws[key]
+        meta['source'] = self.response.url 
+        return Request(url, meta=meta)

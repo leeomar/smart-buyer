@@ -1,3 +1,5 @@
 #/bin/python
+# coding: utf-8
 
-discount_signal = object()
+item_extracted = object()
+item_saved = object()

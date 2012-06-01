@@ -1,12 +1,16 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-from crawler.dao.mongoclient import MongoClient
-from crawler.utils.url_util import get_uid, get_domain
-from crawler.dao.item import GoodsItem
+from scrapy.utils.signal import send_catch_log
+from scrapy import log
+
+from crawler import signals
+from crawler.utils.url import get_uid, get_domain
+from .mongoclient import MongoClient
+from .item import GoodsItem
 import time
     
-class GoodsDAO:
+class GoodsClient:
 
     def __init__(self, host, port, dbname, collection_name):
         self.dbclient = MongoClient().connect(
@@ -25,7 +29,6 @@ class GoodsDAO:
             goods_item.data = dbrecord['data']
             goods_item.bottom_price = dbrecord['bottom_price']
             goods_item.domain = dbrecord['domain']
-
             return goods_item
         else:
             return None
@@ -36,26 +39,25 @@ class GoodsDAO:
         crawl_time = int(time.time()) 
         goods_item = self.get(url, collection_name)
         if goods_item:
-            self.dbclient.insert_field(uid, collection_name, 
-                data=(price, crawl_time),)
-            if price <= goods_item.get_bottom_price():
+            if goods_item.add_price(price, crawl_time):
                 self.dbclient.update_field(uid, collection_name, 
-                   bottom_price=(price, crawl_time))
-        elif not goods_item.duplicate_price_item(price, crawl_time):
+                    data=goods_item.data,
+                    bottom_price=goods_item.bottom_price)
+            else:
+                log.msg('duplicate price')
+        else: 
             self.dbclient.insert(
                 {   "url":url, 'uid': uid,  "name":name, 
                     "cat":cat, "data":[(price, crawl_time)], 
                     "bottom_price":(price, crawl_time), 
-                    "domain=":domain
+                    "domain":domain
                  }, uid, collection_name)
-        else:
-            #TODO log here
-            pass
-       
-        print goods_item 
+
+        send_catch_log(signal=signals.item_saved,
+            url=url, price=price, name=name, cat=cat)
 
 if __name__ == '__main__':
-    goods_dao = GoodsDAO('127.0.0.1', 27017, "test", "test")
+    goods_dao = GoodsClient('127.0.0.1', 27017, "test", "test")
 
     url = 'http://www.360buy.com/product/342079.html'
     name = "moto手机"

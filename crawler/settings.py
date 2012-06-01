@@ -13,7 +13,7 @@ SELECTORS_BACKEND = "lxml"
 
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
-DEFAULT_ITEM_CLASS = 'crawler.dao.goods_dao.GoodsItem'
+#DEFAULT_ITEM_CLASS = 'crawler.dao.goods.GoodsItem'
 SPIDER_MANAGER_CLASS = 'crawler.extensions.spidermanager.MySpiderManager'
 #USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
 USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'
@@ -28,6 +28,7 @@ DOWNLOADER_MIDDLEWARES = {
 
 EXTENSIONS = {
     'crawler.extensions.masterclient.MasterClient': 0,
+    'crawler.extensions.signalhandler.SignalHandler': 10,
     'scrapy.contrib.resolver.CachingResolver': 20,
 }
 
@@ -37,17 +38,19 @@ SPIDER_PARSERS = {
 
 #persistence layer group Mapping
 PLG_MAPPING = {
-    "360buy.com" : "360buy",
-    "okbuy.com" : 'okbuy',
-    "letao.com" : 'letao',
-    "price_monitor" : 'intime_price',
+    "buy360" : "buy360",
+    "okbuy" : 'okbuy',
+    "letao" : 'letao',
+    "price_monitor" : 'intime',
 }
 
 MONGODB_HOST='127.0.0.1'
 MONGODB_PORT=27017
-MONGODB_DBNAME='price_trend'
-DEFAULT_COLLECTION_NAME='default_collection'
+MONGODB_DBNAME='price'
+DEFAULT_COLLECTION_NAME='default'
 
 MASTER_HOST='127.0.0.1'
 MASTER_PORT=9090
 DEFAULT_TIMEOUT=10
+
+TMP_FILE_DIR='/tmp'
