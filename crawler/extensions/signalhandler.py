@@ -18,5 +18,4 @@ class SignalHandler(object):
             %(url, item_num))
 
     def handle_item_saved(self, url, price, name, cat):
-        log.msg("receive signal[item_saved], %s, %s, %s"\
-            %(url, price, name,))
+        log.msg("receive signal[item_saved], %s, %s" %(url, price,))

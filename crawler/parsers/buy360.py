@@ -83,6 +83,6 @@ class Buy360Parser(BaseParser):
         urls = hxs.select('//div[@class="pagin pagin-m"]/a[@class="next"]/@href').extract()
         if urls:
             request = self.make_request_from_response(
-                url=urls[0],)
+                url="http://www.360buy.com/products/%s" % urls[0],)
             self.crawl(request)
             self.log('next page:%s' % request.url)
