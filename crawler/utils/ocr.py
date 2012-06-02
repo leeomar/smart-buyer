@@ -1,25 +1,16 @@
 #/bin/python
 
-import urllib2
 import os
 import re
-import string
-from .url import get_uid
 from scrapy import log
+from .goods import canonicalize_price
 
-DEFAULT_PATH='/tmp'
-def gocr(url, tmpdir=None):
-    if tmpdir is None:
-        tmpdir = DEFAULT_PATH
-    data = urllib2.urlopen(url).read()
-    tmp_file = "%s/%s.tmp.png" % (tmpdir, get_uid(url))
-    f = file(tmp_file, "wb")
-    f.write(data)
-    f.close()
-
-    s = os.popen('gocr %s' % tmp_file).read()
+def gocr(imagefile):
+    s = os.popen('gocr %s' % imagefile).read()
     ss = re.sub('o', '0', s)
-    sprice = ''.join(re.findall('(\d+)', ss))
-    log.msg('gocr %s, get [%s]' % (url, sprice))
-    price = int(string.atof(sprice))
+    price = canonicalize_price(ss)
+
+    #sprice = ''.join(re.findall('(\d+)', ss))
+    #price = int(string.atof(sprice))
+    log.msg('gocr %s, get [%s]' % (imagefile, price))
     return price

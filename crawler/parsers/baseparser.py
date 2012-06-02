@@ -1,14 +1,19 @@
 #/bin/python
 # -*- coding: utf-8 -*-
 
-from scrapy.http.response.text import TextResponse
-from crawler.logobj import LogableObject
-from crawler.utils.url import get_domain, get_uid
+#from scrapy.http.response.text import TextResponse
+import copy
 from urlparse import urlparse
 from scrapy.conf import settings
-from crawler.utils.unicode import stringPartQ2B
 from scrapy.project import crawler
 from scrapy.http import Request
+from scrapy.utils.signal import send_catch_log
+from scrapy.stats import stats
+
+from crawler.logobj import LogableObject
+from crawler.utils.url import get_domain, get_uid
+from crawler.utils.unicode import stringPartQ2B
+from crawler import signals
 
 class ReturnStatus(object):
     stop_it = 0
@@ -63,14 +68,14 @@ class BaseParser(LogableObject):
     
     def init_context(self, response, basic_link_info, spider):
         self.response = response
-        self.basic_link_info = basic_link_info#BasicLinkInfo.from_response(response) 
+        self.basic_link_info = basic_link_info
         self.spider = spider
 
     '''@Interface: 
     '''
     def conditon_permit(self, response, basic_link_info, spider):
-        if not isinstance(response, TextResponse):
-            return False
+        #if not isinstance(response, TextResponse):
+        #    return False
         
         if self.ALLOW_CGS and \
             basic_link_info.content_group not in self.ALLOW_CGS:
@@ -84,17 +89,23 @@ class BaseParser(LogableObject):
         
         self.log("use parser: %s" % type(self))
         self.init_context(response, basic_link_info, spider)
-        self.process()
+        item_num = self.process()
+        send_catch_log(signal=signals.item_extracted,
+            url=self.response.url, item_num=item_num)
 
         return ReturnStatus.stop_it
 
     '''@Interface: 
     '''
     def process(self):
-        pass
+        return 0
     
     def get_collection_name(self):
         return self.plg_mapping.get(self.basic_link_info.pl_group)
+
+    def save(self, url, name, cat, price):
+        self.spider.dbclient.put(url, name, cat, price,
+            self.get_collection_name())
 
     def encode(self, text, tencoding='utf-8'):
         if not isinstance(text, unicode):
@@ -114,8 +125,12 @@ class BaseParser(LogableObject):
         self.log("craw request:%s, refer:%s" % (request.url, self.response.url))
 
     def make_request_from_response(self, url, **metakws):
-        meta = self.response.meta
+        meta = copy.deepcopy(self.response.meta)
         for key in metakws:
             meta[key] = metakws[key]
-        meta['source'] = self.response.url 
+        meta['source'] = self.response.url
         return Request(url, meta=meta)
+
+    def stats_report(self):
+        #stats.inc_value('docsaved_count', spider=self.spider)
+        pass

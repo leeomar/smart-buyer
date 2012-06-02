@@ -58,7 +58,7 @@ def parse_file(filename):
 def main(client):
     yield client.ping()
 
-    spkg = parse_file('test_seeds.file')
+    spkg = parse_file('seeds.file')
     print 'invoke add seeds'
     yield client.add_seeds('FileSeedsLoader', spkg)
     reactor.stop()

@@ -20,16 +20,16 @@ class GoodsClient:
         uid = get_uid(url)
         dbrecord = self.dbclient.find_one(uid, collection_name)
         if dbrecord:
-            goods_item = GoodsItem()
-            goods_item.oid = str(dbrecord['_id'])
-            goods_item.url = dbrecord['url']
-            goods_item.uid = dbrecord['uid']
-            goods_item.name = dbrecord['name']
-            goods_item.cat = dbrecord['cat']
-            goods_item.data = dbrecord['data']
-            goods_item.bottom_price = dbrecord['bottom_price']
-            goods_item.domain = dbrecord['domain']
-            return goods_item
+            item = GoodsItem()
+            item.oid = str(dbrecord['_id'])
+            item.url = dbrecord['url']
+            item.uid = dbrecord['uid']
+            item.name = dbrecord['name']
+            item.cat = dbrecord['cat']
+            item.data = dbrecord['data']
+            item.bottom_price = dbrecord['bottom_price']
+            item.domain = dbrecord['domain']
+            return item
         else:
             return None
     
@@ -37,12 +37,12 @@ class GoodsClient:
         uid = get_uid(url)
         domain = get_domain(url)
         crawl_time = int(time.time()) 
-        goods_item = self.get(url, collection_name)
-        if goods_item:
-            if goods_item.add_price(price, crawl_time):
+        item = self.get(url, collection_name)
+        if item:
+            if item.add_price(price, crawl_time):
                 self.dbclient.update_field(uid, collection_name, 
-                    data=goods_item.data,
-                    bottom_price=goods_item.bottom_price)
+                    data=item.data,
+                    bottom_price=item.bottom_price)
             else:
                 log.msg('duplicate price')
         else: 

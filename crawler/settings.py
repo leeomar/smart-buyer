@@ -14,9 +14,13 @@ SELECTORS_BACKEND = "lxml"
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
 #DEFAULT_ITEM_CLASS = 'crawler.dao.goods.GoodsItem'
-SPIDER_MANAGER_CLASS = 'crawler.extensions.spidermanager.MySpiderManager'
 #USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
 USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'
+
+SPIDER_MANAGER_CLASS = 'crawler.extensions.spidermanager.MySpiderManager'
+STATS_CLASS = 'scrapy.statscol.MemoryStatsCollector'
+STATS_ENABLED = True
+STATS_DUMP = False
 
 DOWNLOADER_MIDDLEWARES = {
     'crawler.middlewares.hostpolite.HostPoliteCtrlMiddleware' : 200,
@@ -24,6 +28,7 @@ DOWNLOADER_MIDDLEWARES = {
     'scrapy.contrib.downloadermiddleware.stats.DownloaderStats' : 300,
     'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware' : 500,
     'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware' : 700,
+    'crawler.middlewares.bandwidth.BandwidthMiddleware' : 1000,
 }
 
 EXTENSIONS = {
@@ -34,6 +39,7 @@ EXTENSIONS = {
 
 SPIDER_PARSERS = {
     "crawler.parsers.buy360.Buy360Parser" : 0,
+    "crawler.parsers.letao.LetaoParser" : 0,
 }
 
 #persistence layer group Mapping
@@ -41,7 +47,7 @@ PLG_MAPPING = {
     "buy360" : "buy360",
     "okbuy" : 'okbuy',
     "letao" : 'letao',
-    "price_monitor" : 'intime',
+    "monitor" : 'intime',
 }
 
 MONGODB_HOST='127.0.0.1'
