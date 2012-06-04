@@ -40,6 +40,7 @@ EXTENSIONS = {
 SPIDER_PARSERS = {
     "crawler.parsers.buy360.Buy360Parser" : 0,
     "crawler.parsers.letao.LetaoParser" : 0,
+    "crawler.parsers.okbuy.OkbuyParser" : 0,
 }
 
 #persistence layer group Mapping
