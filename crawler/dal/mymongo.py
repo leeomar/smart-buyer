@@ -14,55 +14,55 @@ class MongoClient:
     def __init__(self):
         pass
 
-    def connect(self, host, port, dbname, default_collection_name=None):
+    def connect(self, host, port, dbname, default_collection=None):
         self.dbclient = Connection(host, port)
         self.db = self.dbclient[dbname]
-        self.default_collection_name = default_collection_name
+        self.default_collection = default_collection
         log.msg("connect to mongo[%s:%s], db:%s, collection:%s"\
-            %(host, port, dbname, default_collection_name))
+            %(host, port, dbname, default_collection))
         return self
 
-    def create_index(self, feild_name, ascending=True, collection_name=None): 
-        self.get_collection(collection_name).create_index( \
+    def create_index(self, feild_name, ascending=True, collection=None): 
+        self.get_collection(collection).create_index( \
                 [(feild_name, ASCENDING if ascending else DESCENDING),])
 
-    def get_collection(self, collection_name=None):
-        if collection_name is None:
-            collection_name = self.default_collection_name
+    def get_collection(self, collection=None):
+        if collection is None:
+            collection = self.default_collection
 
-        return self.db[collection_name]
+        return self.db[collection]
     
     def get_objectid(self, key):
         return ObjectId(str(key))
 
-    def insert(self, dict_obj, pk=None, collection_name=None):
+    def insert(self, dict_obj, pk=None, collection=None):
         if pk is not None:
             dict_obj[MongoClient.PRIMARY_KEY] = pk 
-        self.get_collection(collection_name).insert(dict_obj)
-        log.msg('insert %s, collection:%s' % (dict_obj, collection_name))
+        self.get_collection(collection).insert(dict_obj)
+        log.msg('insert %s, collection:%s' % (dict_obj, collection))
         return dict_obj
     
-    def insert_field(self, pk, collection_name=None, **field_value_pairs):
-        collection = self.get_collection(collection_name)
+    def insert_field(self, pk, collection=None, **kws):
+        collection = self.get_collection(collection)
         collection.update({MongoClient.PRIMARY_KEY : pk},
-            {'$push': field_value_pairs}, 
+            {'$push': kws}, 
             upsert = True)
 
-    def update_field(self, pk, collection_name=None, **field_value_pairs):
-        collection = self.get_collection(collection_name)
+    def update_field(self, pk, collection=None, **kws):
+        collection = self.get_collection(collection)
         collection.update({MongoClient.PRIMARY_KEY : pk},
-                {'$set': field_value_pairs},
+                {'$set': kws},
                 upsert=True)
     
-    def find_one(self, pk, collection_name=None):
-        collection = self.get_collection(collection_name)
+    def find_one(self, pk, collection=None):
+        collection = self.get_collection(collection)
         result = collection.find_one({MongoClient.PRIMARY_KEY : pk})
-        log.msg('get %s from %s' % (result, collection_name))
+        log.msg('get %s from %s' % (result, collection))
         return result
 
-    def find(self, collection_name=None, **field_value_pairs):
-        collection = self.get_collection(collection_name)
-        return collection.find(field_value_pairs)
+    def find(self, collection=None, **kws):
+        collection = self.get_collection(collection)
+        return collection.find(kws)
     
 if __name__ == '__main__':
     client = MongoClient().connect('127.0.0.1', 27017, "test", "test")

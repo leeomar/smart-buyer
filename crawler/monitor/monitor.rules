@@ -1,9 +1,0 @@
-[
-    {
-        'url': 'www.360buy.com',
-        'discount' : 90,
-        'critical_price' : 100,
-        'price_xpath' : "", 
-    },
-
-]
