@@ -14,6 +14,8 @@ from thrift.protocol import TBinaryProtocol
 #from thrift.server import TServer
 
 from twisted.application import internet, service
+from twisted.python.logfile import DailyLogFile
+from twisted.python.log import ILogObserver, FileLogObserver
 from twisted.python import log
 
 from core.seeder import MemoryBasedSeedsService
@@ -63,12 +65,6 @@ class SchedulerHandler:
         wait = self.seed_service.get_latency_time(url)
         return wait 
 
-
-def initlog():
-    from twisted.python.logfile import DailyLogFile
-    f = DailyLogFile(settings.get('LOG_FILE'), settings.get('LOG_DIR'))
-    log.startLogging(f)
-
 def make_application():
     ssetings = settings.get('SERVER')
     port = ssetings['port']
@@ -82,6 +78,9 @@ def make_application():
     tcp_service = internet.TCPServer(port, factory)
 
     application = service.Application(ssetings['name'])
+    logfile = DailyLogFile(settings.get('LOG_FILE'), settings.get('LOG_DIR'))
+    application.setComponent(ILogObserver, FileLogObserver(logfile).emit)
+
     multiService = service.MultiService()
     tcp_service.setServiceParent(multiService)
     multiService.setServiceParent(application)
