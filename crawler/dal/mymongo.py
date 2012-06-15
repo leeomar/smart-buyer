@@ -11,16 +11,30 @@ class MongoClient:
     PRIMARY_KEY = 'uid'
     OBJECTID_KEY = '_id'
 
-    def __init__(self):
-        pass
-
-    def connect(self, host, port, dbname, default_collection=None):
-        self.dbclient = Connection(host, port)
-        self.db = self.dbclient[dbname]
+    def __init__(self, host, port, db, default_collection=None):
+        self.host = host
+        self.port = port
+        self.db = db
         self.default_collection = default_collection
-        log.msg("connect to mongo[%s:%s], db:%s, collection:%s"\
-            %(host, port, dbname, default_collection))
         return self
+
+    @classmethod
+    def from_settings(cls, settings):
+        host = settings['host']
+        port = settings['port']
+        db = settings['db']
+        default_collection = settings['default_collection']
+        return cls(host, port, db, default_collection)
+
+    def open(self): 
+        self.conn = Connection(self.fhost, self.port)
+        self.db = self.conn[self.db]
+        log.msg("connect to mongo[%s:%s], db:%s, collection:%s"\
+            %(self.host, self.port, self.db, self.default_collection))
+        return self
+
+    def close(self):
+        pass
 
     def create_index(self, feild_name, ascending=True, collection=None): 
         self.get_collection(collection).create_index( \

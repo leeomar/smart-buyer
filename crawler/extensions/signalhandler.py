@@ -3,11 +3,14 @@
 from scrapy.xlib.pydispatch import dispatcher
 from scrapy import log
 
+from crawler.monitor.engine import PriceMonitorEngine
+from scrapy.conf import settings
 from crawler import signals
 
 class SignalHandler(object):
 
     def __init__(self):
+        self.pmengine = PriceMonitorEngine.from_settings(settings)
         dispatcher.connect(self.handle_item_extracted,
                 signal=signals.item_extracted)
         dispatcher.connect(self.handle_item_saved,
@@ -17,5 +20,6 @@ class SignalHandler(object):
         log.msg("receive signal[item_extracted], %s, %s"\
             %(url, item_num))
 
-    def handle_item_saved(self, url, price, name, cat):
-        log.msg("receive signal[item_saved], %s, %s" %(url, price,))
+    def handle_item_saved(self, item):
+        log.msg("receive signal[item_saved], %s, %s" %(item.url,))
+        self.pmengine.process(item)

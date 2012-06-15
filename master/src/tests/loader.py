@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-sys.path.append('../../gen-py.twisted')
+sys.path.append('../../../gen-py.twisted')
 
 from scheduler import Scheduler
 from scheduler.ttypes import Seed, SeedsPackage

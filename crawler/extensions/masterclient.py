@@ -21,9 +21,12 @@ from thrift.protocol import TBinaryProtocol
 class MasterClient(object):
     def __init__(self):
         self.is_requesting = False
-        self.master_host = settings.get("MASTER_HOST")
-        self.master_port = settings.get("MASTER_PORT")
-        self.conn_timeout = settings.getint("DEFAULT_TIMEOUT", 30)
+
+        msettings = settings.get('MASTER')
+        self.host = msettings['host'] 
+        self.port = msettings['port']
+        self.timeout = msettings.get('timeout', 30)
+
         self.conn_defer = self.connect()
         self.conn = None
         dispatcher.connect(self.handle_spider_idle, 
@@ -34,25 +37,25 @@ class MasterClient(object):
                 TTwisted.ThriftClientProtocol,
                 Scheduler.Client,
                 TBinaryProtocol.TBinaryProtocolFactory(),
-            ).connectTCP(self.master_host, 
-                self.master_port, self.conn_timeout)
+            ).connectTCP(self.host, 
+                self.port, self.timeout)
         d.addCallback(self.set_connect)
         d.addErrback(self.close_conn)
         log.msg("try connect to Master[%s:%s]" % \
-            (self.master_host, self.master_port))
+            (self.host, self.port))
         return d
 
     def set_connect(self, conn):
         self.conn = conn
         self.conn_defer = None
         log.msg("connect to Master[%s:%s]" % \
-            (self.master_host, self.master_port), level=log.INFO)
+            (self.host, self.port), level=log.INFO)
 
     def close_conn(self, failure):
         self.conn = None
         self.conn_defer = None
         log.msg('fail connect to Master[%s:%s]' % \
-            (self.master_host, self.master_port), level=log.ERROR)
+            (self.host, self.port), level=log.ERROR)
 
     @defer.inlineCallbacks
     def get_seeds(self, spider):

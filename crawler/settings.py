@@ -58,13 +58,18 @@ MAIL_SERVER = {
     "from" : "",
 }
 
-MONGODB_HOST='127.0.0.1'
-MONGODB_PORT=27017
-MONGODB_DBNAME='price'
-DEFAULT_COLLECTION_NAME='default'
+MONGODB = {
+    'host' : '127.0.0.1',
+    'port' : 27017,
+    'db' : 'price',
+    'default_collection': 'default',
+}
 
-MASTER_HOST='127.0.0.1'
-MASTER_PORT=9090
-DEFAULT_TIMEOUT=10
+MASTER = {
+    'host' : '127.0.0.1',
+    'port' : 9090,
+    'timeout' : 10,
+}
 
 TMP_FILE_DIR='/tmp'
+ACCEPT_DISCOUNT = 0.7

@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # coding: utf8
-
 import sys
 sys.path.append('../../gen-py.twisted')
 
+from twisted.python import log
 from scheduler.ttypes import SeedsPackage
-from reactor import CallLaterOnce
-from log import log
+from utils.reactor import CallLaterOnce
 
 class CycleSeederEngine(object):
     name = 'CycleSeederEngine'
@@ -21,7 +20,7 @@ class CycleSeederEngine(object):
         for key in self.loop_calls:
             self.loop_calls[key].cancel()
             del self.loop_calls[key]
-        log.info("cancel all items in CycleSeederEngine")
+        log.msg("cancel all items in CycleSeederEngine")
 
     def add_package(self, pkg):
         for seed in pkg.seeds:
@@ -32,7 +31,7 @@ class CycleSeederEngine(object):
             return
 
         if seed.url in self.de:
-            log.warn("%s alreay exist" % seed)
+            log.msg("%s alreay exist" % seed)
             return 
 
         if seed.seed_frequency in self.time_shared_seeds:
@@ -44,7 +43,7 @@ class CycleSeederEngine(object):
             self.loop_calls[seed.seed_frequency] = call
 
         self.de.add(seed.url)
-        log.debug('add %s to CycleSeederEngine' % seed)
+        log.msg('add %s to CycleSeederEngine' % seed)
 
     def excute(self, seed_frequency):
         pkg = SeedsPackage()

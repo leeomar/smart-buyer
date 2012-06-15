@@ -1,10 +1,21 @@
-#/bin/python
+######################################
+# Project Configuration
+######################################
+LOG_FILE = 'server.log'
+LOG_DIR = '../log'
+
+SERVER = {
+    'name'  : 'MeMaster',
+    'iface' : '127.0.0.1',
+    'port'  : 9090,
+}
 
 ######################################
 #                                    #
 # the following is log configuration #
 #                                    #   
 ######################################
+'''
 import os
 import logging
 import logging.handlers
@@ -22,3 +33,4 @@ if len( log.handlers ) == 0:
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(module)s.%(funcName)s Line:%(lineno)d %(message)s')
     handler.setFormatter(formatter)
     log.addHandler(handler)
+'''

@@ -12,9 +12,8 @@ import time
     
 class GoodsClient:
 
-    def __init__(self, host, port, dbname, collection_name):
-        self.dbclient = MongoClient().connect(
-                host, port, dbname, collection_name)
+    def __init__(self, dbsettings):
+        self.dbclient = MongoClient.from_settings(dbsettings).open()
 
     def get(self, url, collection_name=None):
         uid = get_uid(url)
@@ -45,13 +44,14 @@ class GoodsClient:
                     bottom_price=item.bottom_price)
             else:
                 log.msg('duplicate price')
+                return
         else: 
-            self.dbclient.insert(
-                {   "url":url, 'uid': uid,  "name":name, 
+            item = {   "url":url, 'uid': uid,  "name":name, 
                     "cat":cat, "data":[(price, crawl_time)], 
                     "bottom_price":(price, crawl_time), 
                     "domain":domain
-                 }, uid, collection_name)
+                 }
+            self.dbclient.insert(item, uid, collection_name)
 
         send_catch_log(signal=signals.item_saved,
             url=url, price=price, name=name, cat=cat)

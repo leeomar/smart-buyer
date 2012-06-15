@@ -1,12 +1,7 @@
 #!/usr/bin/env python
-
-import sys
-sys.path.append('../../common')
-
 import time
-from log import log
-from utils import get_domain
-#from scheduler.ttypes import JobReport
+from twisted.python import log
+from utils.url import get_domain
 
 class SpiderInfo(object):
     def __init__(self, spiderid):
@@ -114,4 +109,4 @@ class GlobalInfo(object):
             hostinfo.total_url_num += 1
         else:
             self.hosts[domain] = HostInfo.from_seed(seed)
-            log.debug('add new host:%s' % domain)
+            log.msg('add new host:%s' % domain)

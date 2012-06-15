@@ -12,12 +12,8 @@ class DefaultSpider(BaseSpider):
     #name = 'basicspider'
     def __init__(self, name, **kwargs):
         super(DefaultSpider, self).__init__(name, **kwargs)
-        mongodb_host = settings.get('MONGODB_HOST') 
-        mongodb_port = settings.get('MONGODB_PORT')
-        mongodb_dbname = settings.get('MONGODB_DBNAME')
-        default_collection = settings.get('DEFAULT_COLLECTION_NAME')
-        self.dbclient = GoodsClient(mongodb_host, mongodb_port, 
-            mongodb_dbname, default_collection)
+        dbsettings = settings.get('MONGODB')
+        self.dbclient = GoodsClient(dbsettings)
         self.parser_manager = ParserMiddlewareManager.from_settings(settings, self)
         self.start_urls = []
         self.start_time = int(time.time())

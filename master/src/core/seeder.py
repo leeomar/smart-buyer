@@ -1,13 +1,13 @@
 #/bin/python
 import sys
 sys.path.append('../../gen-py.twisted')
-sys.path.append('../../common')
 
 import time
+from twisted.python import log
+
 from scheduler.ttypes import JobReport
-from utils import get_domain
-from log import log
-from GlobalInfo import GlobalInfo
+from utils.url import get_domain
+from core.info import GlobalInfo
 
 class MemoryBasedSeedsService:
     SEED_PKG_SIZE = 5
@@ -36,14 +36,14 @@ class MemoryBasedSeedsService:
         self.global_info.update_spider_report(jobreport, 
             True if num > 0 else False)
 
-        log.debug("return %s seeds" % num)
+        log.msg("return %s seeds" % num)
         return results 
 
     def add_seeds(self, clientid, pkg):
         for seed in pkg.seeds:
             self.pending_seeds.append(seed)
             self.global_info.add_seed(seed)
-            log.debug("add %s" % seed)
+            log.msg("add %s" % seed)
         log.info("add %s seeds from %s" % (len(pkg.seeds), clientid))
 
     def get_latency_time(self, url):
