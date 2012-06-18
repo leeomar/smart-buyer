@@ -44,7 +44,9 @@ class MemoryBasedSeedsService:
             self.pending_seeds.append(seed)
             self.global_info.add_seed(seed)
             log.msg("add %s" % seed)
-        log.info("add %s seeds from %s" % (len(pkg.seeds), clientid))
+
+        log.msg("add %s seeds from %s" % (len(pkg.seeds), clientid))
+        return
 
     def get_latency_time(self, url):
         domain = get_domain(url) 

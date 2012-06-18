@@ -90,4 +90,3 @@ application = make_application()
 #server = reactor.listenTCP(9090,
 #    TTwisted.ThriftServerFactory(processor,
 #    pfactory), interface="127.0.0.1")
-#log.info('server starts')

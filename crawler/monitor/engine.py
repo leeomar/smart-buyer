@@ -22,7 +22,7 @@ in the following format:
         frequency: ,
     }
 '''
-from crawler.utils.email import EmailClient
+from crawler.utils.mail import EmailClient
 from crawler.dal.mymongo import MongoClient
 from crawler.dal.item import GoodsItem
 from crawler.utils.url import get_uid
@@ -32,7 +32,8 @@ class Rule(object):
     COLLECTION = 'rules'
 
     def __init__(self, dbsettings):
-        self.mongo = MongoClient.from_settings(dbsettings).open()
+        self.mongo = MongoClient.from_settings(dbsettings)
+        self.mongo.open()
 
     def get(self, uid, price, discount):
         if not price or not discount:

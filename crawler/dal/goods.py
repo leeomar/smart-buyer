@@ -13,7 +13,8 @@ import time
 class GoodsClient:
 
     def __init__(self, dbsettings):
-        self.dbclient = MongoClient.from_settings(dbsettings).open()
+        self.dbclient = MongoClient.from_settings(dbsettings)
+        self.dbclient.open()
 
     def get(self, url, collection_name=None):
         uid = get_uid(url)
@@ -53,8 +54,7 @@ class GoodsClient:
                  }
             self.dbclient.insert(item, uid, collection_name)
 
-        send_catch_log(signal=signals.item_saved,
-            url=url, price=price, name=name, cat=cat)
+        send_catch_log(signal=signals.item_saved, item=item)
 
 if __name__ == '__main__':
     goods_dao = GoodsClient('127.0.0.1', 27017, "test", "test")

@@ -50,7 +50,6 @@ class CycleSeederEngine(object):
         pkg.ID = self.name
         pkg.seeds = self.time_shared_seeds[seed_frequency] 
         self.seed_service.add_seeds(self.name, pkg)
-        #log.debug('excute auto add %s' % pkg)
         self.loop_calls[seed_frequency].schedule(seed_frequency)
 
     def status(self):

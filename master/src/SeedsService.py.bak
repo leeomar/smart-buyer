@@ -3,8 +3,8 @@ import time
 import Queue
 from utils import get_domain
 from reactor import CallLaterOnce
-from log import log
 from GlobalInfo import GlobalInfo
+from twisted.python import log
 
 class MemoryBasedSeedsService:
     SEED_PKG_SIZE = 5
@@ -29,8 +29,8 @@ class MemoryBasedSeedsService:
         for seed in pkg.seeds:
             self.candidate_seeds.append(seed)
             self.global_info.add_seed(seed)
-            log.debug("add %s" % seed)
-        log.info("add %s seeds from %s" % (len(pkg.seeds), clientid))
+            log.msg("add %s" % seed)
+        log.msg("add %s seeds from %s" % (len(pkg.seeds), clientid))
 
     def get_latency_time(self, url):
         domain = get_domain(url) 

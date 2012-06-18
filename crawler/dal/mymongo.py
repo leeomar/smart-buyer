@@ -16,7 +16,6 @@ class MongoClient:
         self.port = port
         self.db = db
         self.default_collection = default_collection
-        return self
 
     @classmethod
     def from_settings(cls, settings):
@@ -27,7 +26,7 @@ class MongoClient:
         return cls(host, port, db, default_collection)
 
     def open(self): 
-        self.conn = Connection(self.fhost, self.port)
+        self.conn = Connection(self.host, self.port)
         self.db = self.conn[self.db]
         log.msg("connect to mongo[%s:%s], db:%s, collection:%s"\
             %(self.host, self.port, self.db, self.default_collection))
