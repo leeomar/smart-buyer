@@ -34,7 +34,8 @@ DOWNLOADER_MIDDLEWARES = {
 EXTENSIONS = {
     'crawler.extensions.masterclient.MasterClient': 0,
     'crawler.extensions.signalhandler.SignalHandler': 10,
-    'scrapy.contrib.resolver.CachingResolver': 20,
+    'crawler.extensions.report.StatesReport': 30,
+    'scrapy.contrib.resolver.CachingResolver': 50,
 }
 
 SPIDER_PARSERS = {

@@ -9,7 +9,7 @@ while [ $index -le $total_spider_num ]
 do 
     format_seq=`printf "%03d" $index`
     #spiderid="$project-$ipaddress-$format_seq"
-    spiderid="$format_seq"
+    spiderid="$project-$format_seq"
     #echo "start spider[$spiderid]"
     curl http://localhost:6801/schedule.json -d project=crawler -d spider=$spiderid -d jobid=$spiderid 
     index=$(($index + 1))
