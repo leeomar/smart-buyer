@@ -23,8 +23,10 @@ STATS_ENABLED = True
 STATS_DUMP = False
 
 DOWNLOADER_MIDDLEWARES = {
-    'crawler.middlewares.hostpolite.HostPoliteCtrlMiddleware' : 200,
-    'scrapy.contrib.downloadermiddleware.redirect.RedirectMiddleware' : 100,
+    'crawler.middlewares.hostpolite.HostPoliteCtrlMiddleware' : 100,
+    'crawler.middlewares.js.JsMiddleware' : 150,
+
+    'scrapy.contrib.downloadermiddleware.redirect.RedirectMiddleware' : 200,
     'scrapy.contrib.downloadermiddleware.stats.DownloaderStats' : 300,
     'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware' : 500,
     'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware' : 700,
@@ -66,6 +68,13 @@ MONGODB = {
     'default_collection': 'default',
 }
 
+REDIS = {
+    'host' : '127.0.0.1',
+    'port' : 6379,
+    'db' : 0,
+    'expire' :  60*60*24*7,
+}
+
 MASTER = {
     'host' : '127.0.0.1',
     'port' : 9090,
@@ -74,3 +83,7 @@ MASTER = {
 
 TMP_FILE_DIR='/tmp'
 ACCEPT_DISCOUNT = 0.7
+
+JS_SITES = [
+    'http://suning.com/',        
+]

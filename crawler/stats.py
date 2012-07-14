@@ -24,7 +24,7 @@ class Slot(object):
         self.register_spiders = {} # spiderid : spiderInfo
 
 
-class StatsEngine(self):
+class StatsEngine(object):
     
     def __init__(self):
         pass

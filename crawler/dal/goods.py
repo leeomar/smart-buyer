@@ -6,7 +6,7 @@ from scrapy import log
 
 from crawler import signals
 from crawler.utils.url import get_uid, get_domain
-from .mymongo import MongoClient
+from crawler.clients.mymongo import MongoClient
 from .item import GoodsItem
 import time
     

@@ -23,7 +23,7 @@ in the following format:
     }
 '''
 from crawler.utils.mail import EmailClient
-from crawler.dal.mymongo import MongoClient
+from crawler.clients.mymongo import MongoClient
 from crawler.dal.item import GoodsItem
 from crawler.utils.url import get_uid
 from scrapy import log
