@@ -30,17 +30,17 @@ class EmailClient(object):
         try:
             server = smtplib.SMTP()
             server.connect(self.host)
-            #server.starttls() 
+            server.starttls() 
             server.login(self.user, self.pwd)
             server.sendmail(self.fromaddr, recipients, message.as_string())
-            server.close()
+            server.quit()
         except Exception:
             raise
 
 if __name__ == '__main__':
     host = "smtp.gmail.com:587"
-    user = ""
-    pwd = ""
-    fromaddr = "lijian.whu@gmail.com"
+    user = "smartbuyer.me"
+    pwd = "smart1234"
+    fromaddr = "smartbuyer.me@gmail.com"
     client = EmailClient(host, user, pwd, fromaddr)
     client.send(['lijian2@myhexin.com',], 'test mail', 'this a test mail from py')

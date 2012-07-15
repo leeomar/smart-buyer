@@ -7,7 +7,9 @@ from pyphantomjs import load_page
 
 class JsMiddleware(object):
     def __init__(self):
-        self.pattern = re.compile("|".join(settings.get('JS_SITES')))
+        self.pattern = re.compile("|".join(settings.get('JS_PATTERNS')))
+        log.msg('load JS_PATTERNS: %s' % ",".join(settings.get('JS_PATTERNS')),
+                level=log.INFO)
 
     def process_request(self, request, spider):
         if self.pattern.match(request.url):

@@ -55,10 +55,10 @@ PLG_MAPPING = {
 }
 
 MAIL_SERVER = {
-    "host" : "",
-    "user" : "",
-    "pwd"  : "",
-    "from" : "",
+    "host" : "smartbuyer.me@gmail.com",
+    "user" : "smartbuyer.me",
+    "pwd"  : "smart1234",
+    "from" : "smartbuyer.me@gmail.com",
 }
 
 MONGODB = {
@@ -84,6 +84,6 @@ MASTER = {
 TMP_FILE_DIR='/tmp'
 ACCEPT_DISCOUNT = 0.7
 
-JS_SITES = [
-    'http://suning.com/',        
+JS_PATTERNS = [
+    'http://www.suning.com/emall/',        
 ]
