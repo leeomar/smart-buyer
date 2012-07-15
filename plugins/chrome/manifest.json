@@ -1,0 +1,21 @@
+{
+    "name": "真心折",
+    "version": "0.21",
+    "description": "价格趋势，目前支持 www.360buy.com www.letao.com",
+    "icons": {
+        "16": "static/img/icon.png",
+        "48": "static/img/icon.png",
+        "128": "static/img/icon.png"
+    },
+    "background_page": "background.html",
+    "content_scripts": [{
+        "matches": ["http://www.360buy.com/product/*", "http://www.letao.com/shoe-*", "http://www.okbuy.com/product/detail/*"],
+        "js": ["static/js/jquery.min.js", "static/js/highcharts.js", "static/js/charts.js"],
+        "run_at": "document_start"
+    }],
+    "browser_action": {
+        "default_icon": "static/img/icon.png",
+        "default_popup": "popup.html"
+    },
+    "permissions": ["tabs", "http://*/*", "http://chrome.tuanzz.com/*"]
+}
