@@ -44,6 +44,7 @@ SPIDER_PARSERS = {
     "crawler.parsers.buy360.Buy360Parser" : 0,
     "crawler.parsers.letao.LetaoParser" : 0,
     "crawler.parsers.okbuy.OkbuyParser" : 0,
+    "crawler.parsers.suning.SuningParser" : 0,
 }
 
 #persistence layer group Mapping
@@ -51,7 +52,8 @@ PLG_MAPPING = {
     "buy360" : "buy360",
     "okbuy" : 'okbuy',
     "letao" : 'letao',
-    "monitor" : 'intime',
+    "suning" : 'suning',
+    "monitor" : 'monitor',
 }
 
 MAIL_SERVER = {
@@ -64,7 +66,7 @@ MAIL_SERVER = {
 MONGODB = {
     'host' : '127.0.0.1',
     'port' : 27017,
-    'db' : 'price',
+    'db' : 'smartbuyer',
     'default_collection': 'default',
 }
 
