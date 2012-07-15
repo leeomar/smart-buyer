@@ -1,0 +1,7 @@
+
+1 redis
+2 mongo
+3 scrapy
+4 thrift, pythrift
+5 gocr
+6 sudo easy_install redis
