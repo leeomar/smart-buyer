@@ -8,5 +8,5 @@
 logs
 eggs
 dbs
-project.egg-info/*
-build/*
+project.egg-info
+build
