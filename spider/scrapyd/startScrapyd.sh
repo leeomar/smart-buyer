@@ -1,4 +1,5 @@
 #!/bin/bash
+cd "$(dirname "$0")"
 
 #30:黑 31:红 32:绿 33:黄 34:蓝色 35:紫色 36:深绿 37:白色 
 warn(){
@@ -13,8 +14,8 @@ debug(){
     echo -e "\033[0;30;1m $(date "+%Y-%m-%d %H:%M:%S") [debug]: $1 \033[0m"
 }
 
-#SCRAPY_HOME="/home/newbie/workspace/scrapy/"
-SCRAPY_HOME="/home/scrapyer/scrapy-0-12/"
+SCRAPY_HOME="/home/newbie/workspace/scrapy_0.14/"
+#SCRAPY_HOME="/home/scrapyer/scrapy-0-12/"
 nohup twistd -ny $SCRAPY_HOME/extras/scrapyd.tac 1>logs/scrapyd.log 2>logs/scrapyd.err &
 sleep 1
 if [ -f "twistd.pid" ]; then

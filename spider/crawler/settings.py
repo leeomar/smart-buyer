@@ -13,8 +13,6 @@ SELECTORS_BACKEND = "lxml"
 
 SPIDER_MODULES = ['crawler.spiders']
 NEWSPIDER_MODULE = 'crawler.spiders'
-#DEFAULT_ITEM_CLASS = 'crawler.dao.goods.GoodsItem'
-#USER_AGENT = '%s/%s' % (BOT_NAME, BOT_VERSION)
 USER_AGENT = 'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0)'
 
 SPIDER_MANAGER_CLASS = 'crawler.extensions.spidermanager.MySpiderManager'
