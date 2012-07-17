@@ -6,3 +6,12 @@
 5 gocr
 6 sudo easy_install redis
 7 PIL, http://www.pythonware.com/products/pil/
+
+当我编译好程序后，想进入gdb调试程序，然后出现下面错误信息：
+gdb: error while loading shared libraries: libexpat.so.1: cannot open shared
+object file: No such file or directory
+
+在网上搜了很长时间找到解决方法，其实方法很简单，就是建立一个软链接：
+ln -s /usr/lib/libexpat.so /usr/lib/libexpat.so.1
+
+这是因为在/usr/lib里找不到libexpat.so.1，但在/usr/lib里有libexpat.so，这样就可以通过软链接找到这个库。

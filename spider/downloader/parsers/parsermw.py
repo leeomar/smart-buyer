@@ -52,4 +52,5 @@ class ParserMiddlewareManager(LogableObject):
                 break
 
         if ret_status != ReturnStatus.stop_it:
-            self.log('ignore unknow response: %s' % type(response), level=log.ERROR)
+            self.log('ignore unknow response, url:%s, type:%s' \
+                % (response.url, type(response)), level=log.ERROR)
