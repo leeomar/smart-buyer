@@ -25,14 +25,12 @@ pkill_thread(){
 
     if $force_stop; then
         info 'force stop thread'
-        ps -efww | grep $thread_name | grep -v grep | cut -c 9-15| xargs kill
--9 2>/dev/null
+        ps -efww | grep $thread_name | grep -v grep | cut -c 9-15| xargs kill -9 2>/dev/null
     else
-        ps -efww | grep $thread_name | grep -v grep | cut -c 9-15| xargs kill
-        2>/dev/null
+        ps -efww | grep $thread_name | grep -v grep | cut -c 9-15| xargs kill 2>/dev/null
     fi
 
-    sleep 2
+    sleep 3
     ps -efww | grep $thread_name | grep -v grep
     if [ $? -eq 0 ]; then
         warn "fail stop all $thread_name thread"
