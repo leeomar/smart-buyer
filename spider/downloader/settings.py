@@ -32,7 +32,7 @@ DOWNLOADER_MIDDLEWARES = {
 }
 
 EXTENSIONS = {
-    'downloader.extensions.masterclient.MasterClient': 0,
+    'downloader.extensions.scheduler.SchedulerClient': 0,
     'downloader.extensions.signalhandler.SignalHandler': 10,
     'downloader.extensions.report.StatesReport': 30,
     #'scrapy.contrib.resolver.CachingResolver': 50,
@@ -75,7 +75,7 @@ REDIS = {
     'default_expire' :  60*60*24*7,
 }
 
-MASTER = {
+SCHEDULER_ADDR = {
     'host' : '127.0.0.1',
     'port' : 9090,
     'timeout' : 10,

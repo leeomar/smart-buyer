@@ -12,5 +12,6 @@ do
     spiderid="$project-$format_seq"
     #echo "start spider[$spiderid]"
     curl http://localhost:6801/schedule.json -d project=downloader -d spider=$spiderid -d jobid=$spiderid 
+
     index=$(($index + 1))
 done

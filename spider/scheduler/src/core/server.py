@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import sys
-sys.path.append('../../gen-py.twisted')
+sys.path.append('protocol/gen-py.twisted')
 
 import time
 from scheduler import Scheduler

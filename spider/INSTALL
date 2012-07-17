@@ -5,3 +5,4 @@
 4 thrift, pythrift
 5 gocr
 6 sudo easy_install redis
+7 PIL, http://www.pythonware.com/products/pil/
