@@ -7,8 +7,8 @@ from scrapy.conf import settings
 from scrapy.http import Request
 from scrapy.project import crawler
 
-from crawler.scheduler import Scheduler
-from crawler.scheduler.ttypes import JobReport
+from downloader.scheduler import Scheduler
+from downloader.scheduler.ttypes import JobReport
 
 from twisted.internet import reactor
 from twisted.internet.protocol import ClientCreator

@@ -3,8 +3,8 @@
 
 from scrapy import log
 from scrapy.utils.misc import load_object
-from crawler.logobj import LogableObject
-from crawler.parsers.baseparser import BasicLinkInfo, ReturnStatus
+from downloader.logobj import LogableObject
+from downloader.parsers.baseparser import BasicLinkInfo, ReturnStatus
 
 class ParserMiddlewareManager(LogableObject):
     component_name = 'parser plugin'

@@ -6,10 +6,10 @@ from cStringIO import StringIO
 from scrapy.selector import HtmlXPathSelector
 from scrapy import log
 
-from crawler.parsers.baseparser import BaseParser
-from crawler.utils.selector import extract_value
-from crawler.utils.ocr import gocr
-from crawler.utils.url import get_uid
+from downloader.parsers.baseparser import BaseParser
+from downloader.utils.selector import extract_value
+from downloader.utils.ocr import gocr
+from downloader.utils.url import get_uid
 
 class SuningParser(BaseParser):
     BASE_URL = 'http://www.suning.com'

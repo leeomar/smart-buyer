@@ -1,7 +1,7 @@
 #/bin/python
-from crawler.utils.url import get_domain
-from crawler.utils.time import today
-from crawler.clients.myredis import MyRedisClient
+from downloader.utils.url import get_domain
+from downloader.utils.time import today
+from downloader.clients.myredis import MyRedisClient
 
 class GoodsMetaInfo(object):
     EXTRACT_ITEM_OK = 'OK'

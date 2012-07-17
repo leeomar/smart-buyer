@@ -5,8 +5,8 @@ from scrapy.spider import BaseSpider
 from scrapy.conf import settings
 from scrapy.stats import stats
 
-from crawler.parsers.parsermw import ParserMiddlewareManager
-from crawler.dal.goods import GoodsClient
+from downloader.parsers.parsermw import ParserMiddlewareManager
+from downloader.dal.goods import GoodsClient
 
 class DefaultSpider(BaseSpider):
     name = 'default_spider'

@@ -4,9 +4,9 @@
 from scrapy.utils.signal import send_catch_log
 from scrapy import log
 
-from crawler import signals
-from crawler.utils.url import get_uid, get_domain
-from crawler.clients.mymongo import MongoClient
+from downloader import signals
+from downloader.utils.url import get_uid, get_domain
+from downloader.clients.mymongo import MongoClient
 from .item import GoodsItem
 import time
     

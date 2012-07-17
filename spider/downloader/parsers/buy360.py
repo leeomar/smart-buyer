@@ -6,9 +6,9 @@ from cStringIO import StringIO
 from scrapy.selector import HtmlXPathSelector
 from scrapy import log
 
-from crawler.parsers.baseparser import BaseParser
-from crawler.utils.selector import extract_value
-from crawler.utils.ocr import gocr
+from downloader.parsers.baseparser import BaseParser
+from downloader.utils.selector import extract_value
+from downloader.utils.ocr import gocr
 
 #http://www.360buy.com/allSort.aspx
 #no need to crawl following categories

@@ -22,10 +22,10 @@ in the following format:
         frequency: ,
     }
 '''
-from crawler.utils.mail import EmailClient
-from crawler.clients.mymongo import MongoClient
-from crawler.dal.item import GoodsItem
-from crawler.utils.url import get_uid
+from downloader.utils.mail import EmailClient
+from downloader.clients.mymongo import MongoClient
+from downloader.dal.item import GoodsItem
+from downloader.utils.url import get_uid
 from scrapy import log
 
 class Rule(object):

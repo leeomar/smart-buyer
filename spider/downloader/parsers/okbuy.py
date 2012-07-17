@@ -3,8 +3,8 @@
 from .baseparser import BaseParser
 from scrapy.selector import HtmlXPathSelector
 
-from crawler.utils.selector import extract_value
-from crawler.utils.goods import canonicalize_price
+from downloader.utils.selector import extract_value
+from downloader.utils.goods import canonicalize_price
 from scrapy import log
 import json
 

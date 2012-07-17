@@ -4,7 +4,7 @@ create a spider or re-use existing spiders with different settings
 
 from scrapy import log
 from scrapy.spidermanager import SpiderManager
-from crawler.spiders.default import DefaultSpider
+from downloader.spiders.default import DefaultSpider
 
 class MySpiderManager(SpiderManager):
     loaded = True

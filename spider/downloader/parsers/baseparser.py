@@ -10,10 +10,10 @@ from scrapy.http import Request
 from scrapy.utils.signal import send_catch_log
 from scrapy.stats import stats
 
-from crawler.logobj import LogableObject
-from crawler.utils.url import get_domain, get_uid
-from crawler.utils.unicode import stringPartQ2B
-from crawler import signals
+from downloader.logobj import LogableObject
+from downloader.utils.url import get_domain, get_uid
+from downloader.utils.unicode import stringPartQ2B
+from downloader import signals
 
 class ReturnStatus(object):
     stop_it = 0

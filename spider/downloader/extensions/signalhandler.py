@@ -3,8 +3,8 @@ from scrapy.xlib.pydispatch import dispatcher
 from scrapy import log
 
 from scrapy.conf import settings
-from crawler import signals
-from crawler.monitor.engine import PriceMonitorEngine
+from downloader import signals
+from downloader.monitor.engine import PriceMonitorEngine
 from .meta import GoodsMetaInfo
 
 class SignalHandler(object):
