@@ -3,8 +3,10 @@
 *.err
 *.pid
 *.out
+*.bak
 *~
 \#*
+log
 logs
 eggs
 dbs
