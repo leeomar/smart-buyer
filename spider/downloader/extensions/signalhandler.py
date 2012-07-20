@@ -24,5 +24,5 @@ class SignalHandler(object):
         self.metainfo.save_extract_info(url, item_num)
 
     def handle_item_saved(self, item):
-        log.msg("receive signal[item_saved], %s, %s" %(item.url,))
+        log.msg("receive signal[item_saved], %s" %(item['url'],))
         self.pmengine.process(item)

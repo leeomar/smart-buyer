@@ -5,7 +5,8 @@ import subprocess
 from cStringIO import StringIO
 
 PYPHANTOMJS_ROOT = "%s/phantomjs_1_6" % os.path.dirname(os.path.realpath(__file__))
-PYPHANTOMJS_CMD = "%s/bin/phantomjs" % PYPHANTOMJS_ROOT
+PYPHANTOMJS_CMD = "phantomjs"
+#PYPHANTOMJS_CMD = "%s/bin/phantomjs" % PYPHANTOMJS_ROOT
 PYPHANTOMJS_CONFIG = "--config=%s/config.json"  % PYPHANTOMJS_ROOT 
 PYPHANTOMJS_JS = "%s/load_page.js" % PYPHANTOMJS_ROOT
 

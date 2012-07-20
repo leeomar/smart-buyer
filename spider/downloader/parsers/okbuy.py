@@ -57,7 +57,7 @@ class OkbuyParser(BaseParser):
         jsonobj = json.loads(self.response.body, self.response.encoding)
         gname_dict = self.response.meta['gname_dict']
         for key in gname_dict:
-            self.log("%s, type:%s" %(jsonobj.get(key), type(jsonobj.get(key))))
+            #self.log("%s, type:%s" %(jsonobj.get(key), type(jsonobj.get(key))))
             if key not in jsonobj:
                 self.log("fail get price for %s" % key, level=log.ERROR)
                 continue

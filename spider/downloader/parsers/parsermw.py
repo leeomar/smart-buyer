@@ -31,16 +31,6 @@ class ParserMiddlewareManager(LogableObject):
            level=log.DEBUG)
         return cls(parsers)
 
-    """
-    def get_parser(self, parser_cls):
-        print self.parsers
-        for parser in self.parsers:
-            print type(parser)
-            if isinstance(parser, parser_cls):
-                return parser
-
-        return None
-    """
     def process_response(self, response, spider):
         basic_link_info = BasicLinkInfo.from_response(response)
         self.log("%s" % basic_link_info, level=log.DEBUG)
