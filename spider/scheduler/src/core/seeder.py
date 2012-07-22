@@ -10,11 +10,13 @@ from utils.url import get_domain
 from core.info import GlobalInfo
 
 class MemoryBasedSeedsService:
-    SEED_PKG_SIZE = 5
+    SEED_PKG_SIZE = 1
     
-    def __init__(self):
+    def __init__(self, pkg_size):
+        self.SEED_PKG_SIZE = pkg_size
         self.pending_seeds = []
         self.global_info = GlobalInfo() 
+        log.msg("init MemoryBasedSeedsService, SEED_PKG_SIZE:%s" % pkg_size)
 
     @property
     def seeds_num(self):

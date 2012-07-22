@@ -44,5 +44,5 @@ if [ $1 ];then
     force_stop=true
 fi
 
-project='downloader'
+project='dl-'
 pkill_thread $project $force_stop

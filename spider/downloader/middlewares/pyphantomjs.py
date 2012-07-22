@@ -79,6 +79,12 @@ if __name__ == '__main__':
         print 'Usage: pyphantomjs url_file'
         sys.exit(2)
     print sys.argv
+    d = defer_load_page(sys.argv[1]) 
+    d.addBoth(printdata)
+    d.addBoth(stopTwisted)
+    reactor.run()
+
+    '''
     defers = []
     with open(sys.argv[1]) as f:
         while 1:
@@ -92,3 +98,4 @@ if __name__ == '__main__':
     dl = defer.DeferredList(defers)
     dl.addBoth(stopTwisted)
     reactor.run()
+    '''

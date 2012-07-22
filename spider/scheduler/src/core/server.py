@@ -19,16 +19,16 @@ from twisted.python.log import ILogObserver, FileLogObserver
 from twisted.python import log
 
 from core.seeder import MemoryBasedSeedsService
-from core.engine import CycleSeederEngine
+from core.engine import AutoseedingEngine
 from utils.struct_format import *
 from conf import settings
 
-class SchedulerHandler:
+class RequestHandler:
     implements(Scheduler.Iface)
     def __init__(self, seed_service):
         self.seed_service = seed_service
-        self.cycle_seed_engine = CycleSeederEngine(self.seed_service)
-        log.msg('init SchedulerHandler')
+        self.autoseeding_engine = AutoseedingEngine(self.seed_service)
+        log.msg('init RequestHandler')
 
     def ping(self):
         log.msg("ping received")
@@ -54,9 +54,8 @@ class SchedulerHandler:
         log.msg("Request add_seeds from %s, %s" %\
             (clientid, format_seedspackage(pkg)))
         self.seed_service.add_seeds(clientid, pkg)
-        print 'add seed 1'
-        self.cycle_seed_engine.add_package(pkg)
-        print 'add seed 2'
+        self.autoseeding_engine.add_package(pkg)
+        log.msg("finish process add_seeds from %s" % clientid)
         return
 
     def get_latency_time(self, spiderid, url):
@@ -69,8 +68,9 @@ def make_application():
     ssetings = settings.get('SERVER')
     port = ssetings['port']
 
-    seed_servie = MemoryBasedSeedsService()
-    handler = SchedulerHandler(seed_servie)
+    pkg_size = settings.getint("SEED_PKG_SIZE")
+    seed_servie = MemoryBasedSeedsService(pkg_size)
+    handler = RequestHandler(seed_servie)
     processor = Scheduler.Processor(handler)
 
     factory = TTwisted.ThriftServerFactory(processor,

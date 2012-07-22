@@ -13,7 +13,7 @@ class JsMiddleware(object):
 
     def process_request(self, request, spider):
         if self.pattern.match(request.url):
-            (rc, url, content) = load_page(request.url, timeout=30)  
+            (rc, url, content) = load_page(request.url, timeout=60)  
             if rc != 0:
                 raise IgnoreRequest(
                     'pyphantomjs error, rc:%s, url:%s, content:%s'%\

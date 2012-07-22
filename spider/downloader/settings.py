@@ -24,10 +24,12 @@ DOWNLOADER_MIDDLEWARES = {
     'downloader.middlewares.hostpolite.HostPoliteCtrlMiddleware' : 100,
     'downloader.middlewares.js.JsMiddleware' : 150,
 
+    'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware' : 180,
     'scrapy.contrib.downloadermiddleware.redirect.RedirectMiddleware' : 200,
     'scrapy.contrib.downloadermiddleware.stats.DownloaderStats' : 300,
     'scrapy.contrib.downloadermiddleware.robotstxt.RobotsTxtMiddleware' : 500,
     'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware' : 700,
+
     'downloader.middlewares.bandwidth.BandwidthMiddleware' : 1000,
 }
 

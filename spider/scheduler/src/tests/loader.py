@@ -40,7 +40,7 @@ def parse_file(filename):
     pkg.seeds = []
     while 1:
         line = f.readline()
-        print line
+        #print line
         
         if not line:
             break
