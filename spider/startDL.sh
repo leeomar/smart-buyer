@@ -5,7 +5,7 @@ info(){
 }
 
 index=1
-total_spider_num=3
+total_spider_num=1
 project='dl'
 ipaddress=`/sbin/ifconfig | grep -A 6 eth1 | grep 'inet addr:' |awk -F':' '{print $2}' | awk -F'.' '{print $4}' | awk '{print $1}'`
 

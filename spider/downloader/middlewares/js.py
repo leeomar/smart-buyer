@@ -13,6 +13,10 @@ class JsMiddleware(object):
 
     def process_request(self, request, spider):
         if self.pattern.match(request.url):
+            import os
+            curdir = "%s/phantomjs_1_6" % os.path.dirname(os.path.realpath(__file__))
+            log.msg('current path: %s' % curdir)
+
             (rc, url, content) = load_page(request.url, timeout=60)  
             if rc != 0:
                 raise IgnoreRequest(

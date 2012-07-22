@@ -1,6 +1,6 @@
 #/bin/python
 from downloader.utils.url import get_domain
-from downloader.utils.time import today
+from downloader.utils.timecmp import today
 from downloader.clients.myredis import MyRedisClient
 
 class GoodsMetaInfo(object):

@@ -1,6 +1,6 @@
 #/bin/python
 # -*- coding: utf-8 -*-
-from downloader.utils.time import is_same_day
+from downloader.utils.timecmp import is_same_day
 
 class GoodsItem:
     MAX_PRICE_NUM = 90

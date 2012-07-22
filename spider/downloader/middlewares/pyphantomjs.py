@@ -4,11 +4,15 @@ import fcntl
 import subprocess
 from cStringIO import StringIO
 
-PYPHANTOMJS_ROOT = "%s/phantomjs_1_6" % os.path.dirname(os.path.realpath(__file__))
-PYPHANTOMJS_CMD = "phantomjs"
+#PYPHANTOMJS_ROOT = "%s/phantomjs_1_6" % os.path.dirname(os.path.realpath(__file__))
 #PYPHANTOMJS_CMD = "%s/bin/phantomjs" % PYPHANTOMJS_ROOT
-PYPHANTOMJS_CONFIG = "--config=%s/config.json"  % PYPHANTOMJS_ROOT 
-PYPHANTOMJS_JS = "%s/load_page.js" % PYPHANTOMJS_ROOT
+#PYPHANTOMJS_CONFIG = "--config=%s/config.json"  % PYPHANTOMJS_ROOT 
+#PYPHANTOMJS_JS = "%s/load_page.js" % PYPHANTOMJS_ROOT
+
+CUR_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+PYPHANTOMJS_CMD = "%s/phantomjs_1_6/bin/phantomjs" % CUR_DIRECTORY
+PYPHANTOMJS_CONFIG = "--config=config.json"
+PYPHANTOMJS_JS = "load_page.js"
 
 def fread(fobj, noblock=False):
     if noblock:
@@ -76,13 +80,17 @@ if __name__ == '__main__':
     #print load_page('awww.abaidu.com')
     import sys
     if len(sys.argv) != 2:
-        print 'Usage: pyphantomjs url_file'
+        print 'Usage: pyphantomjs url'
         sys.exit(2)
+    print load_page(sys.argv[1])
+    
+    '''
     print sys.argv
     d = defer_load_page(sys.argv[1]) 
     d.addBoth(printdata)
     d.addBoth(stopTwisted)
     reactor.run()
+    '''
 
     '''
     defers = []
