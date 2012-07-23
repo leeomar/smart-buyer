@@ -83,6 +83,7 @@ class PriceWatcherEngine(object):
 
         price = his_prices[-1][0]
         recipients = self.rule.get(get_uid(item['url']), price, discount)
-        subject = 'Big Promotion[$title]'
-        content = "$title is now ￥%s, discount %s, %s" % (price, discount, item['url'])
-        self.mail.send(recipients, subject, content)
+        if recipients and len(recipients) > 0:
+            subject = 'Big Promotion[$title]'
+            content = "$title is now ￥%s, discount %s, %s" % (price, discount, item['url'])
+            self.mail.send(recipients, subject, content)
