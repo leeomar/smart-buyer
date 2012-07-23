@@ -3,21 +3,19 @@ from scrapy.conf import settings
 from scrapy.exceptions import IgnoreRequest
 from scrapy.http import HtmlResponse
 from scrapy import log
-from pyphantomjs import load_page
+from pyphantomjs import PyPhantomJs 
 
 class JsMiddleware(object):
     def __init__(self):
+        self.phantomjs_path = settings.get('PHANTOMJS_PATH')
+        self.phantom = PyPhantomJs(self.phantomjs_path)
         self.pattern = re.compile("|".join(settings.get('JS_PATTERNS')))
         log.msg('load JS_PATTERNS: %s' % ",".join(settings.get('JS_PATTERNS')),
                 level=log.INFO)
 
     def process_request(self, request, spider):
         if self.pattern.match(request.url):
-            import os
-            curdir = "%s/phantomjs_1_6" % os.path.dirname(os.path.realpath(__file__))
-            log.msg('current path: %s' % curdir)
-
-            (rc, url, content) = load_page(request.url, timeout=60)  
+            (rc, url, content) = self.phantom.load_page(request.url, timeout=60)
             if rc != 0:
                 raise IgnoreRequest(
                     'pyphantomjs error, rc:%s, url:%s, content:%s'%\

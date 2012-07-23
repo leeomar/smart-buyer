@@ -12,3 +12,5 @@ eggs
 dbs
 project.egg-info
 build
+spider/downloader/middlewares/phantomjs_1_6/bin/phantomjs
+spider/downloader/middlewares/phantomjs_1_6/bin/phantomjs.ubuntu

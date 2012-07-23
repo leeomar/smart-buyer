@@ -4,15 +4,10 @@ import fcntl
 import subprocess
 from cStringIO import StringIO
 
-#PYPHANTOMJS_ROOT = "%s/phantomjs_1_6" % os.path.dirname(os.path.realpath(__file__))
-#PYPHANTOMJS_CMD = "%s/bin/phantomjs" % PYPHANTOMJS_ROOT
-#PYPHANTOMJS_CONFIG = "--config=%s/config.json"  % PYPHANTOMJS_ROOT 
-#PYPHANTOMJS_JS = "%s/load_page.js" % PYPHANTOMJS_ROOT
-
 CUR_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
-PYPHANTOMJS_CMD = "%s/phantomjs_1_6/bin/phantomjs" % CUR_DIRECTORY
-PYPHANTOMJS_CONFIG = "--config=config.json"
-PYPHANTOMJS_JS = "load_page.js"
+PYPHANTOMJS_CMD = "phantomjs"
+PYPHANTOMJS_CONFIG = "--config=%s/config.json" % CUR_DIRECTORY
+PYPHANTOMJS_JS = "%s/load_page.js" % CUR_DIRECTORY
 
 def fread(fobj, noblock=False):
     if noblock:
@@ -26,42 +21,59 @@ def fread(fobj, noblock=False):
     else:
         fobj.readlines()
 
-def load_page(url, timeout=10, bufsize=1*1024*1024):
-    process = subprocess.Popen(
-        [PYPHANTOMJS_CMD, PYPHANTOMJS_CONFIG, PYPHANTOMJS_JS, url],
-        bufsize=bufsize, stdout=subprocess.PIPE)
+class PyPhantomJs(object):
+    def __init__(self, phantom_path):
+        self.cmd = '%s/bin/phantomjs' % phantom_path
+        self.config = "--config=%s/config.json" % phantom_path
+        self.js = "%s/load_page.js" % phantom_path
+
+    def load_page(self, url, timeout=10, bufsize=1*1024*1024):
+        process = subprocess.Popen(
+            [self.cmd, self.config, self.js, url],
+            bufsize=bufsize, stdout=subprocess.PIPE)
     
-    start_time = time.time()
-    buf = StringIO()
-    istimeout = True 
-    while time.time() - start_time <= timeout:
-        tmp = fread(process.stdout, noblock=True)
-        if tmp:
-            buf.write(tmp)
+        start_time = time.time()
+        buf = StringIO()
+        istimeout = True 
+        while time.time() - start_time <= timeout:
+            tmp = fread(process.stdout, noblock=True)
+            if tmp:
+                buf.write(tmp)
 
-        if process.poll() is None:
-            time.sleep(0.01)
-            continue
-        else:
-            istimeout = False 
-            break
+            if process.poll() is None:
+                time.sleep(0.01)
+                continue
+            else:
+                istimeout = False 
+                break
     
-    if istimeout:
-        buf.write('timeout')
-        process.terminate()
+        if istimeout:
+            buf.write('timeout')
+            process.terminate()
 
-    content = buf.getvalue()
-    buf.close()
-    rc = 1 if istimeout else process.wait()
-    return rc, url, content 
+        content = buf.getvalue()
+        buf.close()
+        rc = 1 if istimeout else process.wait()
+        return rc, url, content 
 
-    '''
-    block read
-    content = process.stdout.readlines()
-    process.stdout.close()
-    process.terminate()
-    return process.wait(), content
-    '''
+'''
+block read
+content = process.stdout.readlines()
+process.stdout.close()
+process.terminate()
+return process.wait(), content
+'''
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) != 2:
+        print 'Usage: pyphantomjs url'
+        sys.exit(2)
+
+    curdir = "%s/phantomjs_1_6" % os.path.dirname(os.path.realpath(__file__))
+    phantom = PyPhantomJs(curdir)
+    print phantom.load_page(sys.argv[1])
+
+'''
 from twisted.internet import defer
 from twisted.internet import threads
 from twisted.internet import reactor
@@ -75,24 +87,7 @@ def printdata(data):
 def stopTwisted(param):
     reactor.stop()
 
-if __name__ == '__main__':
-    #print load_page('http://www.baidu.com')
-    #print load_page('awww.abaidu.com')
-    import sys
-    if len(sys.argv) != 2:
-        print 'Usage: pyphantomjs url'
-        sys.exit(2)
-    print load_page(sys.argv[1])
-    
-    '''
-    print sys.argv
-    d = defer_load_page(sys.argv[1]) 
-    d.addBoth(printdata)
-    d.addBoth(stopTwisted)
-    reactor.run()
-    '''
-
-    '''
+def test_defer():
     defers = []
     with open(sys.argv[1]) as f:
         while 1:
@@ -106,4 +101,4 @@ if __name__ == '__main__':
     dl = defer.DeferredList(defers)
     dl.addBoth(stopTwisted)
     reactor.run()
-    '''
+'''
