@@ -37,7 +37,7 @@ class SuningParser(BaseParser):
                 cat2 = extract_value(subcat.select('a/text()'))
                 url = extract_value(subcat.select('a/@href'))
                 request = self.make_request_from_response( \
-                    "%s/%s" % (self.BASE_URL, url),
+                    "%s%s" % (self.BASE_URL, url),
                     cur_idepth=self.basic_link_info.cur_idepth,
                     cat=[cat1, cat2])
                 self.crawl(request) 

@@ -56,6 +56,7 @@ class GoodsClient:
 
         send_catch_log(signal=signals.item_saved, item=item)
 
+
 if __name__ == '__main__':
     goods_dao = GoodsClient('127.0.0.1', 27017, "test", "test")
 

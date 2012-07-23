@@ -75,3 +75,9 @@ class GoodsItem:
 
     def get_bottom_price(self):
         return self.bottom_price[0]
+
+    def __getitem__(self, opt_name):
+        return getattr(self, opt_name, None)
+
+    def get(self, opt_name):
+        return getattr(self, opt_name, None)

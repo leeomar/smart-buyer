@@ -67,20 +67,22 @@ class PriceMonitorEngine(object):
 
     #action will be triggered by 80 percent sale
     def process(self, item):
-        if not isinstance(item, GoodsItem):
-            log.msg('expect a GoodsItem instance, got %s' % type(item))
+        if not isinstance(item, (GoodsItem, dict)):
+            log.msg('expect GoodsItem or dict, got %s' % type(item))
             return
 
-        if len(item.data) < 2:
-            return
+        log.msg('not support yes')
+        return
 
-        #compare the latest and second latest price
-        discount = float(item.data[-1][0])/item.data[-2][0]
-        if discount > self.accept_discount:
-            return
+        his_prices = item['data']
+        if his_prices and len(his_prices) >= 2:
+            #compare the latest and second latest price
+            discount = float(his_prices[-1][0])/his_prices[-2][0]
+            if discount > self.accept_discount:
+                return
 
-        price = item.data[-1][0]
-        recipients = self.rule.get(get_uid(item.url), price, discount)
+        price = his_prices[-1][0]
+        recipients = self.rule.get(get_uid(item['url']), price, discount)
         subject = 'Big Promotion[$title]'
         content = "$title is now ￥%s, discount %s, %s" % (price, discount, item.url)
         self.mail.send(recipients, subject, content)
