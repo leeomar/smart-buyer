@@ -2,10 +2,11 @@
 '''
 user subscription rules will be stored in mongodb,
 in the following format:
+    watch-rules:
     {
         oid: ,
-        url: ,
         uid: ,
+        url: ,
         email: ,
         price: ,
         discount: ,
@@ -13,14 +14,15 @@ in the following format:
         frequency: ,
     }
 
-    xpath:
+    watch-xpath:
     {
         oid: ,
-        url: ,
         uid: ,
+        url: ,
         xpath: ,
         frequency: ,
     }
+    support frequency: 1min, 15min, 1h, 12h, 1day
 '''
 from downloader.utils.mail import EmailClient
 from downloader.clients.mymongo import MongoClient
@@ -29,8 +31,7 @@ from downloader.utils.url import get_uid
 from scrapy import log
 
 class Rule(object):
-    COLLECTION = 'rules'
-
+    COLLECTION = 'watch-rules'
     def __init__(self, dbsettings):
         self.mongo = MongoClient.from_settings(dbsettings)
         self.mongo.open()
@@ -40,19 +41,20 @@ class Rule(object):
             raise Exception('price and discount cannot be both None')
 
         # { $or : [ { a : 1 } , { b : 2 } ] }
-        rules = self.mongo.find(self.COLLECTION, 
-            { '$or' : [
-                {'uid': uid, 'price' : {'$lte': price}},
-                {'uid': uid, 'discount': {'$lte': discount}}
-            ]})
+        rules = self.mongo.find(
+                { '$or' : [
+                    {'uid': uid, 'price' : {'$lte': price}},
+                    {'uid': uid, 'discount': {'$lte': discount}}
+                ]}, 
+                self.COLLECTION
+            )
 
         emails = []
         for rule in rules:
             emails.appent(rule['email'])
         return emails
 
-
-class PriceMonitorEngine(object):
+class PriceWatcherEngine(object):
     def __init__(self, dbsettings, mailsettings, discount):
         self.rule = Rule(dbsettings) 
         self.mail = EmailClient.from_settings(mailsettings) 
@@ -71,10 +73,8 @@ class PriceMonitorEngine(object):
             log.msg('expect GoodsItem or dict, got %s' % type(item))
             return
 
-        log.msg('not support yes')
-        return
-
         his_prices = item['data']
+        discount = 100
         if his_prices and len(his_prices) >= 2:
             #compare the latest and second latest price
             discount = float(his_prices[-1][0])/his_prices[-2][0]
@@ -84,5 +84,5 @@ class PriceMonitorEngine(object):
         price = his_prices[-1][0]
         recipients = self.rule.get(get_uid(item['url']), price, discount)
         subject = 'Big Promotion[$title]'
-        content = "$title is now ￥%s, discount %s, %s" % (price, discount, item.url)
+        content = "$title is now ￥%s, discount %s, %s" % (price, discount, item['url'])
         self.mail.send(recipients, subject, content)

@@ -69,7 +69,6 @@ class OkbuyParser(BaseParser):
         return len(gname_dict)
 
     def next_page(self, hxs):
-        #pagination object area
         poa = hxs.select('//div[@id="bottom_pagenum"]/span/a')
         for item in poa:
             text = extract_value(item.select('text()'))

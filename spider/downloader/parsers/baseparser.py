@@ -8,6 +8,7 @@ from scrapy.conf import settings
 from scrapy.project import crawler
 from scrapy.http import Request
 from scrapy.utils.signal import send_catch_log
+from urlparse import urljoin
 from scrapy.stats import stats
 
 from downloader.logobj import LogableObject
@@ -57,6 +58,7 @@ class BasicLinkInfo(object):
             cur_xdepth, max_xdepth, content_group, pl_group, source, url)
 
 class BaseParser(LogableObject):
+    IGNORE_LINK_NUM = -1
     ALLOW_CGS = [] 
 
     def __init__(self):
@@ -89,13 +91,17 @@ class BaseParser(LogableObject):
         
         self.log("use parser: %s" % type(self))
         self.init_context(response, basic_link_info, spider)
-        item_num = self.process()
-        send_catch_log(signal=signals.item_extracted,
-            url=self.response.url, item_num=item_num)
+        link_num = self.process()
+        send_catch_log(signal=signals.link_extracted,
+            url=self.response.url, link_num=link_num)
 
         return ReturnStatus.stop_it
 
     '''@Interface: 
+        default process flow:
+        1. process_entrypage  cur_idepth=1
+        2. process_listpage   cur_idepth=2
+        3. process_contentpage cur_idepth=3
     '''
     def process(self):
         return 0
@@ -134,3 +140,6 @@ class BaseParser(LogableObject):
     def stats_report(self):
         #stats.inc_value('docsaved_count', spider=self.spider)
         pass
+
+    def urljoin(self, url, base_url=None):
+        return urljoin(base_url if base_url else self.response.url, url)

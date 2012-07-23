@@ -11,10 +11,10 @@ class MongoClient:
     PRIMARY_KEY = 'uid'
     OBJECTID_KEY = '_id'
 
-    def __init__(self, host, port, db, default_collection=None):
+    def __init__(self, host, port, default_db, default_collection=None):
         self.host = host
         self.port = port
-        self.db = db
+        self.default_db = default_db 
         self.default_collection = default_collection
 
     @classmethod
@@ -27,9 +27,9 @@ class MongoClient:
 
     def open(self): 
         self.conn = Connection(self.host, self.port)
-        self.db = self.conn[self.db]
+        self.db = self.conn[self.default_db]
         log.msg("connect to mongo[%s:%s], db:%s, collection:%s"\
-            %(self.host, self.port, self.db, self.default_collection))
+            %(self.host, self.port, self.default_db, self.default_collection))
         return self
 
     def close(self):
@@ -73,9 +73,9 @@ class MongoClient:
         log.msg('get %s from %s' % (result, collection))
         return result
 
-    def find(self, collection=None, **kws):
+    def find(self, query=None, collection=None):
         collection = self.get_collection(collection)
-        return collection.find(kws)
+        return collection.find(query)
     
 if __name__ == '__main__':
     client = MongoClient().connect('127.0.0.1', 27017, "test", "test")
@@ -93,5 +93,4 @@ if __name__ == '__main__':
     print client.find_one(key)
     print '============='
 
-    print client.find(shop='newegg.com')
-    print client.find(shop='newegg.com')[0]
+    print client.find({'shop' : 'newegg.com'})

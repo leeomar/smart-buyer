@@ -18,7 +18,6 @@ from downloader.utils.ocr import gocr
 #http://book.360buy.com/book/booksort.aspx 图书
 class Buy360Parser(BaseParser):
     ALLOW_CGS =['buy360', ]
-
     def process(self):
         cur_idepth = self.basic_link_info.cur_idepth
         if cur_idepth == 1:
@@ -50,8 +49,6 @@ class Buy360Parser(BaseParser):
                     item_num += 1
 
         return item_num
-        #send_catch_log(signal=signals.item_extracted,
-        #    url=self.response.url, item_num=item_num)
 
     def process_listpage(self):
         item_num = 0
@@ -68,18 +65,10 @@ class Buy360Parser(BaseParser):
                 gurl=url, name=name, sku=skuvalue
                 )
             self.crawl(request)
-
-            #price = gocr(img, self.tmpfile_dir)
-            #if price <= 0:
-            #    self.log('gocr %s from %s' % (price, img), level=log.ERROR)
-            #    continue
-
             item_num += 1
 
         self.next_page(hxs)
         return item_num
-        #send_catch_log(signal=signals.item_extracted,
-        #    url=self.response.url, item_num=item_num)
 
     def process_detailpage(self):
         sku = self.response.meta['sku']

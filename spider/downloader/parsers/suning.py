@@ -12,7 +12,6 @@ from downloader.utils.ocr import gocr
 from downloader.utils.url import get_uid
 
 class SuningParser(BaseParser):
-    BASE_URL = 'http://www.suning.com'
     ALLOW_CGS =['suning', ]
 
     def process(self):
@@ -37,7 +36,7 @@ class SuningParser(BaseParser):
                 cat2 = extract_value(subcat.select('a/text()'))
                 url = extract_value(subcat.select('a/@href'))
                 request = self.make_request_from_response( \
-                    "%s%s" % (self.BASE_URL, url),
+                    self.urljoin(url),
                     cur_idepth=self.basic_link_info.cur_idepth,
                     cat=[cat1, cat2])
                 self.crawl(request) 
@@ -61,7 +60,8 @@ class SuningParser(BaseParser):
             request = self.make_request_from_response(\
                 img_url,
                 cur_idepth=self.basic_link_info.cur_idepth,
-                prod_url=prod_url, prod_name=prod_name, 
+                prod_url=self.urljoin(prod_url),
+                prod_name=prod_name, 
                 cat = self.response.meta['cat']
             )
             self.crawl(request)
@@ -85,12 +85,14 @@ class SuningParser(BaseParser):
             %(image_file, self.response.url, price))
 
         self.save(prod_url, prod_name, cat, price)
-        return 0
+        return 0  
 
     def next_page(self, hxs):
         url = None
-        last_page = int(extract_value(hxs.select('//a[@id="pageLast"]')))
-        current_page = int(extract_value(hxs.select('//div[@class="snPages"]/a[@class="current"]/text()').extract()))
+        last_page = int(extract_value(hxs.select('//a[@id="pageLast"]/text()')))
+        current_page = int(extract_value(
+            hxs.select('//div[@class="snPages"]/a[@class="current"]/text()')))
+
         if current_page == 1:
             #http://www.suning.com/emall/pcd_10052_10051_-7_N_20089_20002_.html
             #['pcd', '10052', '10051', '-7', 'N', '20089', '20002', '.html']
@@ -100,10 +102,10 @@ class SuningParser(BaseParser):
                 "&top=N&top_category=%s&sortIndex=5&currentPage=1&isList=0"\
                 % (fs[1], fs[2], fs[-2], fs[-3],)
         elif current_page < last_page:
-            url = self.response.url.replace('currentPage=%s' % (current_page-1), 'currentPage=%s' % current_page)
+            url = self.response.url.replace(
+                'currentPage=%s' % (current_page-1), 'currentPage=%s' % current_page)
 
         if url:
-            request = self.make_request_from_response(
-                url=url,)
-            self.crawl(request, cat=self.response.meta['cat'])
+            request = self.make_request_from_response(url=url)
+            self.crawl(request)
             self.log('next page:%s' % request.url)
