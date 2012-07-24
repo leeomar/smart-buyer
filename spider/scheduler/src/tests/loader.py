@@ -55,20 +55,44 @@ def parse_file(filename):
     return pkg
 
 @inlineCallbacks
-def main(client):
+def call_add_seeds(client, seed_file):
     yield client.ping()
 
-    spkg = parse_file('seeds.file')
+    spkg = parse_file(seed_file)
     print 'invoke add seeds'
     yield client.add_seeds('FileSeedsLoader', spkg)
     reactor.stop()
 
-if __name__ == '__main__':
+def main():
+    try:
+        import sys, getopt
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:", ["host=", "port="])
+        host = '127.0.0.1' 
+        port = 9090 
+        for o, a in opts:
+            if o in ("-h", "--host"):
+                host  = a
+            if o in ("-p", "--port"):
+                port = int(a)
+
+        if len(args) != 1:
+            print 'expect seeds file name'
+            sys.exit(2)
+
+        seeds_file = args[0]
+    except getopt.GetoptError:
+        print "Usage: python loader.py [-h|--host] [-p|--port] seeds_file"
+        sys.exit(2)
+
+    print "connect scheduler[%s:%s]" % (host, port)
     d = ClientCreator(reactor,
         TTwisted.ThriftClientProtocol,
         Scheduler.Client,
         TBinaryProtocol.TBinaryProtocolFactory(),
-        ).connectTCP("127.0.0.1", 9090)
+        ).connectTCP(host, port)
     d.addCallback(lambda conn: conn.client)
-    d.addCallback(main)
+    d.addCallback(call_add_seeds, seeds_file)
     reactor.run()
+
+if __name__ == '__main__':
+    main()

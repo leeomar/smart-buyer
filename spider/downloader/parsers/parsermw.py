@@ -20,9 +20,9 @@ class ParserMiddlewareManager(LogableObject):
         for clspath in parser_classes:
             parser_cls = load_object(clspath)
             if hasattr(parser_cls, 'from_settings'):
-                parser_obj = parser_cls.from_settings(settings)
+                parser_obj = parser_cls.from_settings(settings, spider)
             else:
-                parser_obj = parser_cls()
+                parser_obj = parser_cls(spider)
     
             parsers.append(parser_obj)
 

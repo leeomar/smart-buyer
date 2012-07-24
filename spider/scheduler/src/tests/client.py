@@ -42,7 +42,7 @@ if __name__ == '__main__':
         TTwisted.ThriftClientProtocol,
         Scheduler.Client,
         TBinaryProtocol.TBinaryProtocolFactory(),
-        ).connectTCP("127.0.0.1", 9090, timeout=30)
+        ).connectTCP("127.0.0.1", 9091, timeout=30)
     d.addCallback(lambda conn: conn.client)
     d.addCallback(main)
     d.addErrback(close)

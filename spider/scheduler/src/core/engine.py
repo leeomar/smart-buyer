@@ -50,7 +50,7 @@ class AutoseedingEngine(object):
                 return
             else:
                 log.msg("%s exist, schedule interval, old: %s, new:%s" \
-                        %(self.uid2timeslice[uid], seed.seed_frequency, seed.url))
+                        %(seed.url, self.uid2timeslice[uid], seed.seed_frequency))
                 self.remove(seed.url)
 
         if seed.seed_frequency in self.timeslice_seeds:

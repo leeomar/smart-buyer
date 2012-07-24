@@ -9,11 +9,15 @@ from scrapy.project import crawler
 from scrapy.http import Request
 from scrapy.utils.signal import send_catch_log
 from urlparse import urljoin
-from scrapy.stats import stats
 
+import Image
+from cStringIO import StringIO
+
+from scrapy.stats import stats
 from downloader.logobj import LogableObject
 from downloader.utils.url import get_domain, get_uid
 from downloader.utils.unicode import stringPartQ2B
+from downloader.utils.ocr import gocr
 from downloader import signals
 
 class ReturnStatus(object):
@@ -60,9 +64,11 @@ class BasicLinkInfo(object):
 class BaseParser(LogableObject):
     IGNORE_LINK_NUM = -1
     ALLOW_CGS = [] 
+    LINK_DEPTH_METHODS = {1: 'process_entrypage', 2: 'process_listpage', 3: 'process_contentpage'}
 
-    def __init__(self):
-        self.spider = None 
+    def __init__(self, spider):
+        super(BaseParser, self).__init__(spider)
+        self.spider = spider 
         self.response = None
         self.basic_link_info = None
         self.plg_mapping = settings.get("PLG_MAPPING") 
@@ -101,16 +107,51 @@ class BaseParser(LogableObject):
         default process flow:
         1. process_entrypage  cur_idepth=1
         2. process_listpage   cur_idepth=2
-        3. process_contentpage cur_idepth=3
+        3. process_contentpage cur_idepth=3 or process_priceimg
     '''
     def process(self):
-        return 0
+        return getattr(self, self.LINK_DEPTH_METHODS[self.basic_link_info.cur_depth])()
     
+    def process_entrypage(self):
+        pass
+    
+    def process_listpage(self):
+        pass
+
+    def process_contentpage(self):
+        return self.process_priceimg()
+
+    def next_page(self):
+        pass
+
+    def crawl_next_page(self, url):
+        url = self.next_page()
+        if url:
+            request = self.make_request_from_response(url=url)
+            self.crawl(request)
+            self.log('crawl next page:%s' % url)
+
+    def process_priceimg(self,):
+        prod_url = self.response.meta['prod_url']
+        prod_name = self.response.meta['prod_name']
+        prod_cats = self.response.meta['prod_cats']
+
+        uid = get_uid(self.response.url)
+        image = Image.open(StringIO(self.response.body))
+        image_file = "%s/%s.%s" % (self.tmpfile_dir, uid, image.format.lower())
+        image.save(image_file)
+        prod_price = gocr(image_file)
+        self.log('save image:%s, url:%s, price:%s' \
+            %(image_file, self.response.url, prod_price))
+
+        self.save(prod_url, prod_name, prod_cats, prod_price)
+        return 1
+
     def get_collection_name(self):
         return self.plg_mapping.get(self.basic_link_info.pl_group)
 
     def save(self, url, name, cat, price):
-        self.spider.dbclient.put(url, name, cat, price,
+        self.spider.dbclient.put(self.urljoin(url), name, cat, price,
             self.get_collection_name())
 
     def encode(self, text, tencoding='utf-8'):
@@ -126,6 +167,9 @@ class BaseParser(LogableObject):
             encoding = self.response.encoding
         return text.decode(encoding)
 
+    def urljoin(self, url, base_url=None):
+        return urljoin(base_url if base_url else self.response.url, url)
+
     def crawl(self, request):
         crawler.engine.crawl(request, self.spider)
         self.log("craw request:%s, refer:%s" % (request.url, self.response.url))
@@ -135,11 +179,8 @@ class BaseParser(LogableObject):
         for key in metakws:
             meta[key] = metakws[key]
         meta['source'] = self.response.url
-        return Request(url, meta=meta)
+        return Request(self.urljoin(url), meta=meta)
 
     def stats_report(self):
         #stats.inc_value('docsaved_count', spider=self.spider)
         pass
-
-    def urljoin(self, url, base_url=None):
-        return urljoin(base_url if base_url else self.response.url, url)
