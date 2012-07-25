@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 from downloader.utils.timecmp import is_same_day
 
-class GoodsItem:
+class ProductRecord:
     MAX_PRICE_NUM = 90
     '''
-        goods storage format:
+        storage format:
         {
             '_id' : 4fa6122145880006ef000000,
             'uid' : ,

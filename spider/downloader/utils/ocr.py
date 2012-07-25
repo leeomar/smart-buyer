@@ -3,7 +3,7 @@
 import os
 import re
 from scrapy import log
-from .goods import canonicalize_price
+from .product import canonicalize_price
 
 def gocr(imagefile):
     s = os.popen('gocr %s' % imagefile).read()

@@ -4,7 +4,7 @@ from .baseparser import BaseParser
 from scrapy.selector import HtmlXPathSelector
 
 from downloader.utils.selector import extract_value
-from downloader.utils.goods import canonicalize_price
+from downloader.utils.product import canonicalize_price
 from scrapy import log
 import json
 
@@ -18,65 +18,59 @@ import json
 #http://www.okbuy.com/product/search?&per_page=100#listheader
 class OkbuyParser(BaseParser):
     ALLOW_CGS = ['okbuy', ]
-    BASE_URL = "http://www.okbuy.com"
+    #BASE_URL = "http://www.okbuy.com"
     DETAIL_BASE_URL = "http://www.okbuy.com/product/detail/"
     PRICE_REQUST_URL = "http://www.okbuy.com/product/ajax_find_listprice/"
 
-    def process(self):
-        cur_idepth = self.basic_link_info.cur_idepth
-        if cur_idepth == 1:
-            return self.process_listpage()
-        else:
-            return self.process_detailpage()
+    LINK_DEPTH_METHODS = {1: 'process_listpage', 2: 'process_ajax_price'}
 
     def process_listpage(self):
         item_num = 0
         hxs = HtmlXPathSelector(self.response)
-        goods = hxs.select('//div[@class="floorConn"]/div[@class="goodsList"]/ul/li')
-        gname_dict = {}
-        gid_list = []
-        for item in goods:
+        products = hxs.select('//div[@class="floorConn"]/div[@class="goodsList"]/ul/li')
+        prod_id2names = {}
+        prod_ids = []
+        for item in products:
             name = extract_value(item.select('.//p[@class="productName"]/@title'))
             #url =  extract_value(item.select('div[@class="txt"]/a/@href'))
-            gid = extract_value(item.select('.//span[@name="price"]/@id'))
-            gid_list.append(gid)
-            gname_dict[gid] = name
+            prod_id = extract_value(item.select('.//span[@name="price"]/@id'))
+
+            prod_ids.append(prod_id)
+            prod_id2names[prod_id] = name
             item_num += 1
 
         request = self.make_request_from_response(
-            url= "%s%s" % (self.PRICE_REQUST_URL, ",".join(gid_list)),
+            url= "%s%s" % (self.PRICE_REQUST_URL, ",".join(prod_ids)),
             cur_idepth=self.basic_link_info.cur_idepth,
-            gname_dict=gname_dict,
+            prod_id2names=prod_id2names,
             )
         self.crawl(request)
 
-        self.next_page(hxs)
+        self.crawl_next_page()
         return item_num
     
-    def process_detailpage(self):
+    def process_ajax_price(self):
         jsonobj = json.loads(self.response.body, self.response.encoding)
-        gname_dict = self.response.meta['gname_dict']
-        for key in gname_dict:
-            #self.log("%s, type:%s" %(jsonobj.get(key), type(jsonobj.get(key))))
-            if key not in jsonobj:
-                self.log("fail get price for %s" % key, level=log.ERROR)
+        prod_id2names = self.response.meta['prod_id2names']
+        for prod_id in prod_id2names:
+            #self.log("%s, type:%s" %(jsonobj.get(prod_id), type(jsonobj.get(prod_id))))
+            if prod_id not in jsonobj:
+                self.log("fail get price for %s" % prod_id, level=log.ERROR)
                 continue
 
-            price = canonicalize_price(jsonobj.get(key))
-            url = "%s%s.html" % (self.DETAIL_BASE_URL, key)
-            name = gname_dict[key]
-            self.save(url, name, [], price)
-        return len(gname_dict)
+            price = canonicalize_price(jsonobj.get(prod_id))
+            prod_url = "%s%s.html" % (self.DETAIL_BASE_URL, prod_id)
+            prod_name = prod_id2names[prod_id]
+            self.save(prod_url, prod_name, [], price)
+        return len(prod_id2names)
 
-    def next_page(self, hxs):
+    def next_page(self, ):
+        hxs = HtmlXPathSelector(self.response)
         poa = hxs.select('//div[@id="bottom_pagenum"]/span/a')
         for item in poa:
             text = extract_value(item.select('text()'))
             if text.find('下一页') != -1:
                 url = extract_value(item.select('@href'))
-                request = self.make_request_from_response(
-                    url="%s%s" % (self.BASE_URL, url),
-                    )
-                self.crawl(request)
-                self.log('next page:%s' % request.url)
-                break
+                return url
+
+        return None

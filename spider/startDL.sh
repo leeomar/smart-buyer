@@ -13,15 +13,19 @@ debug(){
 }
 
 usage(){
-    debug "Usage: /bin/bash startDL.sh [-n thread-num] [dev]"
+    debug "Usage: /bin/bash startDL.sh [-n thread-num] [-h host] [-p port] [release]"
 }
 
+host="127.0.0.1"
+port=6802
 total_spider_num=1
-while getopts "n:h" opt
+while getopts "n:h:p:u" opt
 do
     case $opt in
         n ) total_spider_num=$OPTARG;;
-        h ) usage
+        h ) host=$OPTARG;;
+        p ) port=$OPTARG;;
+        u ) usage
             exit 0;;
         ? ) warn "illegal option"
             exit 1;;
@@ -29,19 +33,20 @@ do
 done
 shift $(($OPTIND - 1))
 
-if [ $# -eq 1 ] && [ $1 == 'dev' ]; then
-    project='dl-dev'
+if [ $# -eq 1 ] && [ $1 == 'release' ]; then
+    project='dl-release'
 else
-    project='dl'
+    project='dl-dev'
 fi 
 
 index=1
 ipaddress=`/sbin/ifconfig | grep -A 6 eth1 | grep 'inet addr:' |awk -F':' '{print $2}' | awk -F'.' '{print $4}' | awk '{print $1}'`
 
+SCRAPYD_URL="http://$host:$port"
 while [ $index -le $total_spider_num ]
 do 
     spiderid="$project-`printf "%03d" $index`"
-    msg=`curl http://localhost:6802/schedule.json -d project=downloader -d spider=$spiderid -d jobid=$spiderid` 
+    msg=`curl $SCRAPYD_URL/schedule.json -d project=downloader -d spider=$spiderid -d jobid=$spiderid` 
     info "start $spiderid, $msg"
 
     index=$(($index + 1))

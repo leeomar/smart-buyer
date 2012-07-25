@@ -42,7 +42,7 @@ pkill_thread(){
 }
 
 usage(){
-    debug "Usage: /bin/bash stopDL.sh [-f] [dev]"
+    debug "Usage: /bin/bash stopDL.sh [-f] [release]"
 }
 
 force_stop=false
@@ -58,10 +58,10 @@ do
 done
 shift $(($OPTIND - 1))
 
-if [ $# -eq 1 ] && [ $1 == 'dev' ]; then
-    project='dl-dev-'
+if [ $# -eq 1 ] && [ $1 == 'release' ]; then
+    project='dl-release-'
 else
-    project='dl-'
+    project='dl-dev-'
 fi 
 
 pkill_thread $project $force_stop

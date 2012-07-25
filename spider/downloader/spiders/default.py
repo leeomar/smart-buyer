@@ -6,7 +6,7 @@ from scrapy.conf import settings
 from scrapy.stats import stats
 
 from downloader.parsers.parsermw import ParserMiddlewareManager
-from downloader.dal.goods import GoodsClient
+from downloader.dal.product import ProductDAO
 
 class DefaultSpider(BaseSpider):
     name = 'default_spider'
@@ -14,7 +14,7 @@ class DefaultSpider(BaseSpider):
     def __init__(self, name, **kwargs):
         super(DefaultSpider, self).__init__(name, **kwargs)
         dbsettings = settings.get('MONGODB')
-        self.dbclient = GoodsClient(dbsettings)
+        self.productDao = ProductDAO(dbsettings)
         self.parser_manager = ParserMiddlewareManager.from_settings(settings, self)
         self.start_urls = []
         self.start_time = int(time.time())

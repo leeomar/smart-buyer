@@ -38,11 +38,26 @@ def close(obj):
     reactor.stop()
 
 if __name__ == '__main__':
+    try:
+        import sys, getopt
+        opts, args = getopt.getopt(sys.argv[1:], "h:p:", ["host=", "port="])
+        host = '127.0.0.1' 
+        port = 9091 
+        for o, a in opts:
+            if o in ("-h", "--host"):
+                host  = a
+            if o in ("-p", "--port"):
+                port = int(a)
+    except getopt.GetoptError:
+        print "Usage: python client.py [-h|--host] [-p|--port]"
+        sys.exit(1)
+
+    print "connect scheduler[%s:%s]" % (host, port)
     d = ClientCreator(reactor,
         TTwisted.ThriftClientProtocol,
         Scheduler.Client,
         TBinaryProtocol.TBinaryProtocolFactory(),
-        ).connectTCP("127.0.0.1", 9091, timeout=30)
+        ).connectTCP(host, port, timeout=30)
     d.addCallback(lambda conn: conn.client)
     d.addCallback(main)
     d.addErrback(close)

@@ -26,7 +26,7 @@ in the following format:
 '''
 from downloader.utils.mail import EmailClient
 from downloader.clients.mymongo import MongoClient
-from downloader.dal.item import GoodsItem
+from downloader.dal.record import ProductRecord
 from downloader.utils.url import get_uid
 from scrapy import log
 
@@ -68,12 +68,12 @@ class PriceWatcherEngine(object):
         return cls(dbsettings, mailsettings, discount)
 
     #action will be triggered by 80 percent sale
-    def process(self, item):
-        if not isinstance(item, (GoodsItem, dict)):
-            log.msg('expect GoodsItem or dict, got %s' % type(item))
+    def process(self, record):
+        if not isinstance(record, (ProductRecord, dict)):
+            log.msg('expect ProductRecord or dict, got %s' % type(record))
             return
 
-        his_prices = item['data']
+        his_prices = record['data']
         discount = 100
         if his_prices and len(his_prices) >= 2:
             #compare the latest and second latest price
@@ -82,8 +82,8 @@ class PriceWatcherEngine(object):
                 return
 
         price = his_prices[-1][0]
-        recipients = self.rule.get(get_uid(item['url']), price, discount)
+        recipients = self.rule.get(get_uid(record['url']), price, discount)
         if recipients and len(recipients) > 0:
             subject = 'Big Promotion[$title]'
-            content = "$title is now ￥%s, discount %s, %s" % (price, discount, item['url'])
+            content = "$title is now ￥%s, discount %s, %s" % (price, discount, record['url'])
             self.mail.send(recipients, subject, content)

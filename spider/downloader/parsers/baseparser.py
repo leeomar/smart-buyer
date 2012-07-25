@@ -3,6 +3,7 @@
 
 #from scrapy.http.response.text import TextResponse
 import copy
+import time
 from urlparse import urlparse
 from scrapy.conf import settings
 from scrapy.project import crawler
@@ -110,7 +111,7 @@ class BaseParser(LogableObject):
         3. process_contentpage cur_idepth=3 or process_priceimg
     '''
     def process(self):
-        return getattr(self, self.LINK_DEPTH_METHODS[self.basic_link_info.cur_depth])()
+        return getattr(self, self.LINK_DEPTH_METHODS[self.basic_link_info.cur_idepth])()
     
     def process_entrypage(self):
         pass
@@ -124,7 +125,7 @@ class BaseParser(LogableObject):
     def next_page(self):
         pass
 
-    def crawl_next_page(self, url):
+    def crawl_next_page(self):
         url = self.next_page()
         if url:
             request = self.make_request_from_response(url=url)
@@ -151,8 +152,20 @@ class BaseParser(LogableObject):
         return self.plg_mapping.get(self.basic_link_info.pl_group)
 
     def save(self, url, name, cat, price):
-        self.spider.dbclient.put(self.urljoin(url), name, cat, price,
+        url = self.urljoin(url)
+        uid = get_uid(url)
+        domain = get_domain(url)
+        crawltime = int(time.time())
+
+        record = {   
+            "url":url, 'uid': uid,  "name":name, 
+            "cat":cat, "data":[(price, crawltime)], 
+            "bottom_price":(price, crawltime), 
+            "domain":domain
+        }
+        self.spider.productDao.put( record,
             self.get_collection_name())
+        send_catch_log(signal=signals.product_record_extracted, record=record)
 
     def encode(self, text, tencoding='utf-8'):
         if not isinstance(text, unicode):

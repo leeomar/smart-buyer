@@ -2,5 +2,5 @@
 # coding: utf-8
 
 link_extracted = object()
-item_extracted = object()
-item_saved = object()
+product_record_extracted = object()
+product_record_saved = object()

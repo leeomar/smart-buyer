@@ -146,7 +146,7 @@ main()
 }
 
 host="127.0.0.1"
-port=6801
+port=6802
 while getopts "h:p:u" opt
 do
     case $opt in
