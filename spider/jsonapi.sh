@@ -1,12 +1,18 @@
 #/bin/sh
+warn(){
+    echo -e "\033[0;31;1m $(date "+%Y-%m-%d %H:%M:%S") [warn]: $1 \033[0m"
+}
 
-SCRAPYD_URL='http://localhost:6801'
+info(){
+    echo -e "\033[0;32;1m $(date "+%Y-%m-%d %H:%M:%S") [info]: $1 \033[0m"
+}
 
-help()
-{
-    echo "Usage:"
-    echo "  sh jsonapi.sh <command> [args]"
-    echo ""
+debug(){
+    echo -e "\033[0;33;1m $(date "+%Y-%m-%d %H:%M:%S") [debug]: $1 \033[0m"
+}
+
+usage(){
+    echo "Usage: /bin/bash jsonapi.sh [-h host] [-p port] <command> [args]"
     echo "Available commands:"
     echo "  schedule: project spider"
     echo "  cancel: project job "
@@ -19,13 +25,14 @@ help()
     echo "  listprojects "
 }
 
+
 assertparam()
 {
     actual=$1
     expect=$2
     if [ $actual -lt $expect ]; then
-        echo "Error: expect $2 args"
-        help
+        warn "Error: expect $2 args"
+        usage 
         exit
     fi
 }
@@ -137,4 +144,22 @@ main()
         ;;
     esac
 }
+
+host="127.0.0.1"
+port=6801
+while getopts "h:p:u" opt
+do
+    case $opt in
+        h ) host=$OPTARG;;
+        p ) port=$OPTARG;;
+        u ) usage
+            exit 0;;
+        ? ) warn "illegal option"
+            exit 1;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+SCRAPYD_URL="http://$host:$port"
+info "deploy to scrapyd, $SCRAPYD_URL"
 main $@ 

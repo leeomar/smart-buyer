@@ -1,16 +1,16 @@
 Question:
-1. plugin怎么知道是否支持某站点
+1. plugin怎么知道是否支持某站点, plugin定期从server更新支持的站点列表
 
 spider:
 1. add commodity price xpath validator
 2. add daily statistis report
-3. test price watcher, email notification
+3. test price watcher, email notification, 
 4. refact parse flow
 
 plugin:
 1. 配置ip，　
 2. 展示历史最低价等数据
-3. xpath上传
+3. 商品价格监控: url, xpath, accept price or discount, email, 用户设置提醒间隔,　监控有效期
 
 web:
 1 xpath interface

@@ -10,7 +10,7 @@ info(){
 }
 
 debug(){
-    echo -e "\033[0;30;1m $(date "+%Y-%m-%d %H:%M:%S") [debug]: $1 \033[0m"
+    echo -e "\033[0;33;1m $(date "+%Y-%m-%d %H:%M:%S") [debug]: $1 \033[0m"
 }
 
 pkill_thread(){
@@ -19,8 +19,8 @@ pkill_thread(){
 
     ps -efww | grep $thread_name | grep -v grep
     if [ $? -ne 0 ]; then
-        warn "no thread named $thread_name"
-        exit 1
+        info "no thread named $thread_name"
+        exit 0
     fi
 
     if $force_stop; then
@@ -34,15 +34,34 @@ pkill_thread(){
     ps -efww | grep $thread_name | grep -v grep
     if [ $? -eq 0 ]; then
         warn "fail stop all $thread_name thread"
+        exit 1
     else
         info "succ stop $thread_name threads" 
+        exit 0
     fi
 }
 
-force_stop=false
-if [ $1 ];then
-    force_stop=true
-fi
+usage(){
+    debug "Usage: /bin/bash stopDL.sh [-f] [dev]"
+}
 
-project='dl-'
+force_stop=false
+while getopts "fh" opt
+do
+    case $opt in
+        f ) force_stop=true;; 
+        h ) usage
+            exit 0;;
+        ? ) warn "illegal option"
+            exit 1;;
+    esac
+done
+shift $(($OPTIND - 1))
+
+if [ $# -eq 1 ] && [ $1 == 'dev' ]; then
+    project='dl-dev-'
+else
+    project='dl-'
+fi 
+
 pkill_thread $project $force_stop

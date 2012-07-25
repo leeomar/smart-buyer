@@ -35,19 +35,34 @@ kill_thread(){
     ps -efww | grep $pid | grep -v grep
     if [ $? -eq 0 ]; then
         warn "fail stop thread[$pid]"
+        exit 1
     else
         info "succ stop thread[$pid]"
+        exit 0
     fi
 }
 
+usage(){
+    debug "Usage: /bin/bash stop.sh [-f]"
+}
+
 force_stop=false
-if [ $1 ];then
-    force_stop=true
-fi
+while getopts "fh" opt
+do
+    case $opt in
+        f ) force_stop=true;; 
+        h ) usage
+            exit 0;;
+        ? ) warn "illegal option"
+            exit 1;;
+    esac
+done
+shift $(($OPTIND - 1))
 
 if [ -f 'twistd.pid' ]; then
     pid=`cat twistd.pid`
     kill_thread $pid $force_stop
 else
     warn 'twistd.pid not found'
+    exit 0
 fi

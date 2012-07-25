@@ -11,7 +11,7 @@ info(){
 }
 
 debug(){
-    echo -e "\033[0;30;1m $(date "+%Y-%m-%d %H:%M:%S") [debug]: $1 \033[0m"
+    echo -e "\033[0;33;1m $(date "+%Y-%m-%d %H:%M:%S") [debug]: $1 \033[0m"
 }
 
 check_rc(){
@@ -21,11 +21,19 @@ check_rc(){
         warn "fail execute $cmd"
         exit 1
     fi
-    echo $1, $2
+    info $1, $2
 }
 
-sh stopDL.sh
-check_rc $?  "stopDL.sh" 
+usage(){
+    debug "Usage: /bin/bash $0 [dev]"
+}
+
+if [ $# -eq 1 ] && [ $1 == 'dev' ]; then
+    dev="dev"
+fi
+
+sh stopDL.sh $dev
+check_rc $?  "stopDL.sh" $dev 
 
 scrapy deploy
 
@@ -42,6 +50,5 @@ cd $scheduler_home/tests
 python loader.py
 cd -
 
-sh startDL.sh
+sh startDL.sh $dev
 check_rc $? "startDL.sh"
-

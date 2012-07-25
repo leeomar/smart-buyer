@@ -20,6 +20,8 @@ nohup twistd -ny $SCRAPY_HOME/extras/scrapyd.tac 1>logs/scrapyd.log 2>logs/scrap
 sleep 1
 if [ -f "twistd.pid" ]; then
     info "start scrapyd[`cat twistd.pid`]"
+    exit 0
 else
     warn "fail start scrapyd"
+    exit 1
 fi
