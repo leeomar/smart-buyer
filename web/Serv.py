@@ -1,3 +1,5 @@
+#!/bin/python
+# -*- coding: utf-8 -*-
 import tornado.ioloop
 import tornado.web
 import tornado.autoreload
@@ -16,16 +18,41 @@ def json(s):
 def timestamp2strtime(timestamp, fmt='"%Y-%m-%d"'):
     return datetime.fromtimestamp(timestamp).strftime(fmt)
 
-class MainHandler(tornado.web.RequestHandler):
-    def get(self):
+class WatchHandler(tornado.web.RequestHandler):
+    #def post(self, url, xpath, acceptable_price, acceptable_discount, email, notify_frequency, watch_period):
+    def post(self):
         '''
-        http://localhost/  --> {arg: "NoUser"}
-        http://localhost/?arg=username  --> {arg: "username"}
+        @parameters:
+            url: 需要监控的商品URL地址
+            xpath: 价格标签的scrapy语法的xpath信息
+            acceptable_price:　可接受的商品价格
+            acceptable_discount: 可接受的价格折扣, acceptable_price和acceptable_discount必须任选其一
+            email: 接收邮件提醒的用户email地址
+            notify_frequency: 提醒频率, 以秒为单位,　例如:notify_frequency＝3600, 即最多一小时一次
+            watch_period: 监控有效期,　以秒为单位,　最长一个月. 例如:　watch_period＝7*3600, 监控一星期
         '''
-        arg = self.get_argument('arg', 'NoUser')
-        self.write(json({'arg': arg}))
+        try:
+            print self.request
+            url = self.get_argument('url')
+            xpath = self.get_argument('xpath')
+            acceptable_price = self.get_argument('acceptable_price')
+            acceptable_discount = self.get_argument('acceptable_discount')
+            email = self.get_argument('email')
+            notify_frequency = self.get_argument('notify_frequency')
+            watch_period = self.get_argument('watch_period')
+            print url
+            print xpath
+            print acceptable_price
+            print acceptable_discount
+            print email
+            print notify_frequency
+            print watch_period
+        except Exception, e:
+            print e
+            self.write(json({'status': '404', 'msg': 'invalide parameter'}))
+        self.write(json({'status' : '200'}))
         
-class PriceTrendHandler(tornado.web.RequestHandler):
+class PriceHandler(tornado.web.RequestHandler):
     def get(self):
         url = self.get_argument('url', None)
         if url is None:
@@ -41,7 +68,7 @@ class PriceTrendHandler(tornado.web.RequestHandler):
             table = domain_table_mapping.get(domain)
             print "[%s], domain:%s, table:%s" % (url, domain, table)
 
-            item = dbclient.find_one(get_uid(url), table)
+            item = mongo.find_one(get_uid(url), table)
             print item
 
 
@@ -64,11 +91,11 @@ class PriceTrendHandler(tornado.web.RequestHandler):
             self.write(json({'status' : 400}))
 
 app = tornado.web.Application([
-    (r"/SmartBuyer", PriceTrendHandler),
-    (r"/", MainHandler),
+    (r"/SmartBuyer/price/", PriceHandler),
+    (r"/SmartBuyer/watch/", WatchHandler),
     ])
-dbclient = MongoClient.from_settings(settings.get('MONGODB'))
-dbclient.open()
+mongo = MongoClient.from_settings(settings.get('MONGODB'))
+mongo.open()
 domain_table_mapping = settings.get('DOMAIN_TABLE_MAPPING')
 
 if __name__ == "__main__":
