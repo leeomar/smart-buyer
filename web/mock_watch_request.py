@@ -3,7 +3,7 @@
 import urllib
 import urllib2
 
-url = 'http://127.0.0.1:10001/SmartBuyer/watch/'
+url = 'http://127.0.0.1:10001/smartbuyer/watch/'
 values = {
     'url' : 'http://www.yougou.com/c_qX/p_99832581.shtml',
     'xpath' : '//div[contains(@id, "JDS_")]',

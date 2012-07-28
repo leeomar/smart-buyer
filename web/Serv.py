@@ -91,8 +91,8 @@ class PriceHandler(tornado.web.RequestHandler):
             self.write(json({'status' : 400}))
 
 app = tornado.web.Application([
-    (r"/SmartBuyer/price/", PriceHandler),
-    (r"/SmartBuyer/watch/", WatchHandler),
+    (r"/smartbuyer/price/", PriceHandler),
+    (r"/smartbuyer/watch/", WatchHandler),
     ])
 mongo = MongoClient.from_settings(settings.get('MONGODB'))
 mongo.open()
