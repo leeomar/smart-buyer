@@ -3,7 +3,7 @@ from downloader.utils.url import get_domain
 from downloader.utils.timecmp import today
 from downloader.clients.myredis import MyRedisClient
 
-class GoodsMetaInfo(object):
+class StatisticInfo(object):
     EXTRACT_LINK_OK = 'LINK_OK'
     EXTRACT_LINK_FAIL = 'LINK_FAIL'
 
