@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import smtplib
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 class EmailClient(object):
@@ -23,16 +24,20 @@ class EmailClient(object):
             raise Exception('expect a recipients list, got %s' %
                 type(recipients))
 
-        message = MIMEText(content, 'html')
-        message['Subject'] = subject
-        message['From'] = self.user 
-        message['To'] = ";".join(recipients)
+        msg = MIMEMultipart('alternative')
+        #msg = MIMEText(content, 'html')
+        msg['Subject'] = subject
+        msg['From'] = self.user 
+        msg['To'] = ";".join(recipients)
+
+        part3 = MIMEText(content, 'html')
+        msg.attach(part3)
         try:
             server = smtplib.SMTP()
             server.connect(self.host)
             server.starttls() 
             server.login(self.user, self.pwd)
-            server.sendmail(self.fromaddr, recipients, message.as_string())
+            server.sendmail(self.fromaddr, recipients, msg.as_string())
             server.quit()
         except Exception:
             raise

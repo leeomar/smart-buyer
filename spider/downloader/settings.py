@@ -89,4 +89,4 @@ ACCEPT_DISCOUNT = 0.7
 JS_PATTERNS = [
     'http://www.suning.com/emall/',        
 ]
-PHANTOMJS_PATH = '/home/newbie/workspace/smart-buyer/spider/downloader/middlewares/phantomjs_1_6'
+PHANTOMJS_PATH = '/Users/lijian/Applications/phantomjs-1.6.1-macosx-static' 

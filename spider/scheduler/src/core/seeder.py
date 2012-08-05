@@ -42,12 +42,18 @@ class MemoryBasedSeedsService:
         return results 
 
     def add_seeds(self, clientid, pkg):
+        num = 0
         for seed in pkg.seeds:
-            self.pending_seeds.append(seed)
-            self.global_info.add_seed(seed)
-            log.msg("add %s" % seed)
+            if seed in self.pending_seeds:
+                log.msg("%s is already exist, skip it" % seed.url)
+            else:
+                self.pending_seeds.append(seed)
+                self.global_info.add_seed(seed)
+                num += 1
+                log.msg("add %s" % seed)
 
-        log.msg("add %s seeds from %s" % (len(pkg.seeds), clientid))
+        log.msg("add_seeds from %s, add %s, skip %s" % 
+            (clientid, num, len(pkg.seeds) - num))
         return
 
     def get_latency_time(self, url):

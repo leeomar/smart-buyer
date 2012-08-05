@@ -27,7 +27,7 @@ class PyPhantomJs(object):
         self.config = "--config=%s/config.json" % phantom_path
         self.js = "%s/load_page.js" % phantom_path
 
-    def load_page(self, url, timeout=10, bufsize=1*1024*1024):
+    def load_page(self, url, timeout=30, bufsize=1*1024*1024):
         process = subprocess.Popen(
             [self.cmd, self.config, self.js, url],
             bufsize=bufsize, stdout=subprocess.PIPE)
