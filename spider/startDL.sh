@@ -1,5 +1,4 @@
 #!/bin/bash
-
 warn(){
     echo -e "\033[0;31;1m $(date "+%Y-%m-%d %H:%M:%S") [warn]: $1 \033[0m"
 }

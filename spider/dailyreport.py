@@ -2,6 +2,9 @@
 import datetime
 from downloader.extensions.statistic import StatisticInfo
 from downloader.utils.mail import EmailClient
+from GChartWrapper import *
+from GChartWrapper.encoding import Encoder
+from GChartWrapper.constants import PY_VER,_print, COLOR_MAP
 
 MAIL_SETTING = {
     'host' : 'smtp.gmail.com:587',
@@ -28,11 +31,36 @@ class DLDailyReport(object):
         self.mail.send(self.recipients, 'SmartBuyer daily report', msg)
 
     def last_week_iterator(self, ):
-        for i in range(-6, 0):
+        for i in range(-7, 0):
             dt = datetime.date.today() + datetime.timedelta(i)
             yield dt.strftime('%Y%m%d') 
+
+    def genchart(self, data):
+        G = LineXY([])
+        G.title('SmartBuyer Daiyly Report')
+        G.size(600, 300)
+        G.axes.type('xyx')
+        G.axes.label(0, 1, 7) # X Axis
+        G.axes.range(1, 0, 100)
+        G.axes.label(2, *[item for item in self.last_week_iterator()])
+
+        lines = []
+        legends = []
+        for key, value in data.items():
+            lines.append(['-1',])
+            lines.append(value)
+            legends.append(key)
+
+        G.dataset(lines)
+        G.legend(*legends)
+       
+        G.color(*(COLOR_MAP.values()[:len(data)]))
+        for i in range(0, len(data)):
+            G.marker('s', 'blue', i, -1, 5)
+        print G
+        return str(G) 
     '''
-        mail:
+        report:
                  8.1     8.2     8.3   ...
         360buy   40/109    
 
@@ -69,21 +97,32 @@ class DLDailyReport(object):
 
         header = "".join(["<td>%s</td>" % item for item in obj.last_week_iterator()])
         table = "<html><head></head><body><table border=1><tr><td></td>%s</tr>" % header
+        chartdata = {}
         for domain, record in result.items():
+            array1 = []
+            array2 = []
             row = "<tr><td>%s</td>" % domain
             for strtime in obj.last_week_iterator():
                 if strtime in record:
                     data = "%s/%s" % (record.get(strtime)[0],
                             record.get(strtime)[1])
+                    array1.append(float(record.get(strtime)[0])/100)
+                    array2.append(float(record.get(strtime)[1])/100)
                 else:
                     data = "None/None"
+                    array1.append(0)
+                    array2.append(0)
                 row = "%s<td>%s</td>" % (row, data)
 
+            chartdata['%s saved' % domain] = array1
+            chartdata['%s extracted' % domain] = array2
             table = "%s%s</tr>" % (table, row)
-        img = "<img src='http://chart.apis.google.com/chart?chco=3072f3,FF0000,00aaaa&amp;chd=t:-1|20.0,70.0,80.0|-1|99.0,30.0,70.0|-1|10.0,90.0,10.0&amp;chdl=data1|data2|data3&amp;chds=0,100&amp;chm=s,FF0000,0,-1,5|s,0000FF,1,-1,5|s,00aa00,2,-1,5&amp;chs=300x150&amp;cht=lxy&amp;chtt=test+chart&amp;chxl=0:|6.9|6.10|6.11|1:|0|50|100&amp;chxt=x,y'></p></body></html>"
+
+        img = "<img src=\"%s\">" % self.genchart(chartdata).replace("&", "&amp;")
         table = "%s</table><p>%s</p></body></html>" % (table, img)
         self.sendreport(table)
 
 if __name__ == '__main__':
     obj = DLDailyReport(REDIS_SETTING, MAIL_SETTING)
     obj.run()
+    print 'done'

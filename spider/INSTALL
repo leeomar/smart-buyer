@@ -5,7 +5,7 @@ install dependecy:
   http://pypi.python.org/pypi/redis/
 3 mongo
   http://www.mongodb.org/
-4  pymongo, easy_install pymongo
+4 pymongo, easy_install pymongo
   http://api.mongodb.org/python/current/
 5 scrapy
   http://scrapy.org/
@@ -17,6 +17,7 @@ install dependecy:
   http://www.pythonware.com/products/pil/
 9 google-chartwrapper, sudo easy_install -U GChartWrapper
   http://code.google.com/p/google-chartwrapper/
+  http://www.haijd.net/archive/computer/google/google_chart_api/api.html
 
 当我编译好程序后，想进入gdb调试程序，然后出现下面错误信息：
 gdb: error while loading shared libraries: libexpat.so.1: cannot open shared
