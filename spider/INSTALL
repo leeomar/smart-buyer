@@ -18,6 +18,8 @@ install dependecy:
 9 google-chartwrapper, sudo easy_install -U GChartWrapper
   http://code.google.com/p/google-chartwrapper/
   http://www.haijd.net/archive/computer/google/google_chart_api/api.html
+10 fabric, easy_install fabric 
+  http://docs.fabfile.org/en/1.4.3/index.html
 
 当我编译好程序后，想进入gdb调试程序，然后出现下面错误信息：
 gdb: error while loading shared libraries: libexpat.so.1: cannot open shared
