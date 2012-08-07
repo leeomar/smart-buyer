@@ -12,9 +12,36 @@ def easyinstall(libname):
         print(green("success install %s" % libname))
 
 @task
-def redis():
+def pyredis():
+    """
+    install python redis client
+    """
     easyinstall('redis')
+
+@task
+def pymongo():
+    """
+    install python mongo client
+    """
+    easyinstall("pymongo")
+
+@task
+def pil():
+    """
+    install python image library
+    """
+    easyinstall("PIL")
+
+@task
+def googleChartWrapper():
+    easyinstall("GChartWrapper")
 
 @task(default=True)
 def all():
-    redis()
+    """
+    install all python dependencies
+    """
+    pyredis()
+    pymongo()
+    pil()
+    googleChartWrapper()

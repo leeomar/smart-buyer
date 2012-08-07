@@ -1,25 +1,34 @@
 install dependecy:
 1 redis
   http://redis.io/
-2 python redis, sudo easy_install redis
-  http://pypi.python.org/pypi/redis/
-3 mongo
+2 mongo
   http://www.mongodb.org/
-4 pymongo, easy_install pymongo
-  http://api.mongodb.org/python/current/
-5 scrapy
+3 scrapy
   http://scrapy.org/
-6 thrift, pythrift
+4 thrift, pythrift
   http://thrift.apache.org/
-7 gocr
+5 gocr
   http://jocr.sourceforge.net/
-8 PIL, sudo easy_install PIL
+6 phantomjs
+  http://phantomjs.org/
+  
+
+1 fabric 
+  easy_install fabric 
+  http://docs.fabfile.org/en/1.4.3/index.html
+2 python redis client
+  easy_install redis
+  http://pypi.python.org/pypi/redis/
+3 pymongo 
+  easy_install pymongo
+  http://api.mongodb.org/python/current/
+4 PIL
+  easy_install PIL
   http://www.pythonware.com/products/pil/
-9 google-chartwrapper, sudo easy_install -U GChartWrapper
+5 google-chartwrapper 
+  easy_install -U GChartWrapper
   http://code.google.com/p/google-chartwrapper/
   http://www.haijd.net/archive/computer/google/google_chart_api/api.html
-10 fabric, easy_install fabric 
-  http://docs.fabfile.org/en/1.4.3/index.html
 
 当我编译好程序后，想进入gdb调试程序，然后出现下面错误信息：
 gdb: error while loading shared libraries: libexpat.so.1: cannot open shared
