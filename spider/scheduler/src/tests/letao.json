@@ -1,0 +1,10 @@
+{
+    "url":"http://www.letao.com/shoe-a-a-a-a-a-a-a-a-p1-n",
+    "content_group":"letao",
+    "pl_group":"letao",
+    "max_idepth":0,
+    "max_xdepth":0,
+    "priority":0, 
+    "crawl_interval":2, 
+    "seed_frequency":10
+}

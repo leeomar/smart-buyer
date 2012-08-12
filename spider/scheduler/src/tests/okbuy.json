@@ -1,0 +1,10 @@
+{
+    "url":"http://www.okbuy.com/product/search",
+    "content_group":"okbuy",
+    "pl_group":"okbuy",
+    "max_idepth":0,
+    "max_xdepth":0,
+    "priority":0, 
+    "crawl_interval":2, 
+    "seed_frequency":10
+}

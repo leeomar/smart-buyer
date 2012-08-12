@@ -5,13 +5,24 @@ install dependecy:
   http://www.mongodb.org/
 3 scrapy
   http://scrapy.org/
+4 boost
+  http://www.boost.org/
 4 thrift, pythrift
   http://thrift.apache.org/
 5 gocr
   http://jocr.sourceforge.net/
 6 phantomjs
   http://phantomjs.org/
-  
+7 Twisted
+  http://twistedmatrix.com/trac/
+8 Zope
+  http://pypi.python.org/pypi/zope.interface/
+9 netpbm
+  yum install netpbm-devel        # red-hat like
+  apt-get install libnetpbm10-dev # debian like
+  yaourt -S extra/netpbm          # arch like
+  port install netpbm        # mac os
+  http://download.sourceforge.net/netpbm/
 
 1 fabric 
   easy_install fabric 
@@ -29,6 +40,12 @@ install dependecy:
   easy_install -U GChartWrapper
   http://code.google.com/p/google-chartwrapper/
   http://www.haijd.net/archive/computer/google/google_chart_api/api.html
+6 solrpy
+  easy_install solrpy
+  http://pypi.python.org/pypi/solrpy/
+7 scrapy
+  easy_install scrapy
+  http://scrapy.org/
 
 当我编译好程序后，想进入gdb调试程序，然后出现下面错误信息：
 gdb: error while loading shared libraries: libexpat.so.1: cannot open shared

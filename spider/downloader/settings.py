@@ -90,3 +90,6 @@ JS_PATTERNS = [
     'http://www.suning.com/emall/',        
 ]
 PHANTOMJS_PATH = '/Users/lijian/Applications/phantomjs-1.6.1-macosx-static' 
+
+ENABLE_SOLR=True
+SOLR="http://localhost:8983/solr"

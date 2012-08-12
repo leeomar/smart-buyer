@@ -36,6 +36,20 @@ def pil():
 def googleChartWrapper():
     easyinstall("GChartWrapper")
 
+@task
+def solrpy():
+    """
+    install solr python client
+    """
+    easyinstall("solrpy")
+
+@task
+def scrapy():
+    """
+    install scrapy
+    """
+    easyinstall("scrapy")
+
 @task(default=True)
 def all():
     """
@@ -45,3 +59,4 @@ def all():
     pymongo()
     pil()
     googleChartWrapper()
+    solrpy()

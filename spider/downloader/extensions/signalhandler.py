@@ -6,6 +6,7 @@ from scrapy.conf import settings
 from downloader import signals
 from downloader.extensions.watcher.engine import PriceWatcherEngine
 from .statistic import StatisticInfo
+from .mysolr import MySolr
 
 class SignalHandler(object):
 
@@ -13,6 +14,10 @@ class SignalHandler(object):
         self.pmengine = PriceWatcherEngine.from_settings(settings)
         self.statistic = StatisticInfo(settings.get('REDIS'))
 
+        self.enable_solr = settings.get('ENABLE_SOLR')
+        if self.enable_solr:
+            self.mysolr = MySolr(settings.get('SOLR'))
+    
         dispatcher.connect(self.handle_link_extracted,
                 signal=signals.link_extracted)
         dispatcher.connect(self.handle_product_record_saved,
@@ -27,10 +32,15 @@ class SignalHandler(object):
 
     def handle_product_record_saved(self, record):
         log.msg("receive signal[product_record_saved], %s" %(record['url'],))
+        '''
+            save record to solr
+        '''
+        if self.enable_solr:
+            self.mysolr.add(record)
+
         self.statistic.record_saved(record)
         self.pmengine.process(record)
 
     def handle_product_record_extracted(self, record):
         log.msg("receive signal[product_record_saved], %s" %(record['url'],))
         self.statistic.record_extracted(record)
-

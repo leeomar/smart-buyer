@@ -45,33 +45,12 @@ def get_uid(url):
 
         return uid
 
-ip_pattern = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
+#ip_pattern = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
+from pydomlib import effectiveTLDs
+from pydomlib import regDomain
 def get_domain(url):
-    """
-        Note: this function is not perfect to get domain,
-        which need a TLDs list to deal with like http://www.foo.com.au/
-    """
-    TLDs = ('cn',) # 'jp', 'uk', 'tw', 'us'
-    host = urlparse.urlparse(url).hostname
+    return regDomain.getRegisteredDomain(url, effectiveTLDs.tldTree)
 
-    if host:
-        #ip
-        if ip_pattern.match(host):
-            return host
-
-        #remove the TLDs
-        suffix = None
-        for tld in TLDs:
-            if host.endswith(tld):
-                suffix = tld
-                host = '.'.join(host.split('.')[:-1])
-                break
-
-        # get domain
-        if suffix:
-            return '.'.join(host.split('.')[-2:]+[suffix,])
-        else:
-            return '.'.join(host.split('.')[-2:])
 def canonicalize_url(url, keep_blank_values=True, keep_fragments=False, \
         encoding=None):
     """Canonicalize the given url by applying the following procedures:

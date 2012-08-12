@@ -1,0 +1,10 @@
+{
+    "url":"http://www.suning.com/emall/SNProductCatgroupView?storeId=10052&catalogId=10051&flag=1",
+    "content_group":"suning",
+    "pl_group":"suning",
+    "max_idepth":0,
+    "max_xdepth":0,
+    "priority":0, 
+    "crawl_interval":2, 
+    "seed_frequency":10
+}
