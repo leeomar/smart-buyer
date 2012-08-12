@@ -13,3 +13,8 @@ def gocr(imagefile):
     price = canonicalize_price(ss)
     log.msg('canonicalize_price, get [%s]' % price)
     return price
+
+if __name__ == "__main__" :
+    import sys
+    print "gocr %s" % sys.argv[1]
+    print gocr(sys.argv[1])
