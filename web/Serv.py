@@ -30,6 +30,7 @@ class PriceTrendHandler(tornado.web.RequestHandler):
         url = self.get_argument('url', None)
         if url is None:
             self.write(json({'status' : 400}))
+            return
         ''' 
         url = url_normalize(url)
         if url is None:
@@ -64,7 +65,7 @@ class PriceTrendHandler(tornado.web.RequestHandler):
             self.write(json({'status' : 400}))
 
 app = tornado.web.Application([
-    (r"/SmartBuyer", PriceTrendHandler),
+    (r"/smartbuyer/price", PriceTrendHandler),
     (r"/", MainHandler),
     ])
 dbclient = MongoClient.from_settings(settings.get('MONGODB'))
