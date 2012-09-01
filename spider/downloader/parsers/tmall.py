@@ -34,24 +34,6 @@ class TmallParser(BaseParser):
         upyunsettings = settings['UPYUN']
         config_file_dir = settings['CONFIG_FILE_DIR']
         return cls(spider, dbsettings, upyunsettings, config_file_dir)
-
-    def parse(self, response):
-        int_dep = response.request.meta.get("INT_DEP", None)
-        req_type = response.request.meta.get("type", None)
-        try:
-            if req_type == 'image':
-                self.log('process image, url:%s' % response.url,
-                        level=log.DEBUG)
-                #print response.headers
-                directory='/tmall/%s' % response.request.meta.get('image_key')
-                self.upyun_client.setContentMD5(md5(response.body)) 
-                u = self.upyun_client.writeFile(directory, response.body,
-                        auto=True)
-                self.log('save image to upyun: %s, %s' % (directory, u))
-        except Exception as e:
-            self.log("exception: %s" % e, level=log.ERROR)
-            import traceback
-            self.log(traceback.format_exc(), level=log.ERROR)
             
     def process_entrypage(self):
         link_num = 0
