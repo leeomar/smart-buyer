@@ -1,0 +1,10 @@
+{
+    "url":"http://brand.tmall.com/tagValueIndex.htm?industryId=100&ftg=46&prt=1331861359023&pr    c=1",
+    "content_group":"tmall",
+    "pl_group":"tmall",
+    "max_idepth":3,
+    "max_xdepth":0,
+    "priority":0, 
+    "crawl_interval":2, 
+    "seed_frequency":10
+}

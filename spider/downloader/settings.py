@@ -45,6 +45,7 @@ SPIDER_PARSERS = {
     "downloader.parsers.letao.LetaoParser" : 0,
     "downloader.parsers.okbuy.OkbuyParser" : 0,
     "downloader.parsers.suning.SuningParser" : 0,
+    "downloader.parsers.tmall.TmallParser" : 0,
 }
 
 #persistence layer group Mapping
@@ -54,6 +55,7 @@ PLG_MAPPING = {
     "letao" : 'letao',
     "suning" : 'suning',
     "monitor" : 'monitor',
+    "tmall" : "kele",
 }
 
 MAIL_SERVER = {
@@ -81,6 +83,12 @@ SCHEDULER_ADDR = {
     'host' : '127.0.0.1',
     'port' : 9091,
     'timeout' : 10,
+}
+
+UPYUN = {
+        'bucket' : 'kele-img',
+        'username' : 'kele-admin',
+        'password' : 'omar1984',
 }
 
 TMP_FILE_DIR='/tmp'

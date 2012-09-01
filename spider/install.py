@@ -12,6 +12,14 @@ def easyinstall(libname):
         print(green("success install %s" % libname))
 
 @task
+def pymmseg():
+    """
+    install pymmseg-cpp
+    https://github.com/pluskid/pymmseg-cpp/
+    """
+    easyinstall('pymmseg-cpp')
+
+@task
 def pyredis():
     """
     install python redis client

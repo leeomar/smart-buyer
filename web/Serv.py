@@ -70,7 +70,9 @@ class PriceHandler(tornado.web.RequestHandler):
 
             item = mongo.find_one(get_uid(url), table)
             print item
-
+            if item is None:
+                self.write(json({'status' : 401, 'msg' : 'sorry for no data'}))
+                return
 
             timeline = [timestamp2strtime(data[1]) for data in item['data']]
             dataline = [float(data[0])/100 for data in item['data']]
@@ -79,6 +81,9 @@ class PriceHandler(tornado.web.RequestHandler):
                 json(
                     {
                      'status' : 200, 
+                     'prod_name' : item['name'],
+                     'bottom_price' : [float(item['bottom_price'][0])/100,
+                         timestamp2strtime(item['bottom_price'][1]) ],
                      'timeline' : timeline, 
                      'series' :
                         [{'name': item['domain'], 'data': dataline}] 

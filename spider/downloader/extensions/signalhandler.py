@@ -24,6 +24,8 @@ class SignalHandler(object):
                 signal=signals.product_record_saved)
         dispatcher.connect(self.handle_product_record_extracted,
                 signal=signals.product_record_extracted)
+        dispatcher.connect(self.handle_kele_record_saved, 
+                signal=signals.kele_record_saved)
 
     def handle_link_extracted(self, url, link_num):
         log.msg("receive signal[link_extracted], %s, %s"\
@@ -40,6 +42,10 @@ class SignalHandler(object):
 
         self.statistic.record_saved(record)
         self.pmengine.process(record)
+
+    def handle_kele_record_saved(self, doc):
+        if self.enable_solr:
+            self.mysolr.add(doc)
 
     def handle_product_record_extracted(self, record):
         log.msg("receive signal[product_record_saved], %s" %(record['url'],))

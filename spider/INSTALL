@@ -46,6 +46,9 @@ install dependecy:
 7 scrapy
   easy_install scrapy
   http://scrapy.org/
+8 pymmseg-cpp
+  easy_install pymmseg-cpp
+  https://github.com/pluskid/pymmseg-cpp/
 
 当我编译好程序后，想进入gdb调试程序，然后出现下面错误信息：
 gdb: error while loading shared libraries: libexpat.so.1: cannot open shared

@@ -4,11 +4,12 @@ import fcntl
 import subprocess
 from cStringIO import StringIO
 
+'''
 CUR_DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 PYPHANTOMJS_CMD = "phantomjs"
 PYPHANTOMJS_CONFIG = "--config=%s/config.json" % CUR_DIRECTORY
 PYPHANTOMJS_JS = "%s/load_page.js" % CUR_DIRECTORY
-
+'''
 def fread(fobj, noblock=False):
     if noblock:
         fd = fobj.fileno()

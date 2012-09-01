@@ -142,7 +142,10 @@ class BaseParser(LogableObject):
         image_file = "%s/%s.%s" % (self.tmpfile_dir, uid, image.format.lower())
         image.save(image_file)
         prod_price = gocr(image_file)
-        self.log('save image:%s, url:%s, price:%s' \
+        #delete this image
+        import os
+        os.remove(image_file)
+        self.log('parse image:%s, url:%s, price:%s' \
             %(image_file, self.response.url, prod_price))
 
         self.save(prod_url, prod_name, prod_cats, prod_price)

@@ -1,7 +1,0 @@
-{
-    'load-images' : false,
-    'userAgent' : 'Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20110814 Firefox/6.0',
-    'local-to-remote-url-access' : true, 
-    'ignoreSslErrors': true,
-    'localToRemoteUrlAccessEnabled': true
-} 
