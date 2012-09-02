@@ -49,7 +49,8 @@ def get_uid(url):
 from pydomlib import effectiveTLDs
 from pydomlib import regDomain
 def get_domain(url):
-    return regDomain.getRegisteredDomain(url, effectiveTLDs.tldTree)
+    host = urlparse.urlparse(url).hostname
+    return regDomain.getRegisteredDomain(host, effectiveTLDs.tldTree)
 
 def canonicalize_url(url, keep_blank_values=True, keep_fragments=False, \
         encoding=None):
