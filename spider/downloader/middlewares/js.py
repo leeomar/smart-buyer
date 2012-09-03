@@ -7,7 +7,7 @@ from pyphantomjs import PyPhantomJs
 
 class JsMiddleware(object):
     def __init__(self):
-        self.phantomjs_path = settings.get('PHANTOMJS_PATH')
+        self.phantomjs_path = settings.get('CONFIG_DIRECTORY')
         self.phantom = PyPhantomJs(self.phantomjs_path)
         self.pattern = re.compile("|".join(settings.get('JS_PATTERNS')))
         log.msg('load JS_PATTERNS: %s' % ",".join(settings.get('JS_PATTERNS')),

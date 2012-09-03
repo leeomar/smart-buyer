@@ -97,7 +97,8 @@ ACCEPT_DISCOUNT = 0.7
 JS_PATTERNS = [
     'http://www.suning.com/emall/',        
 ]
-PHANTOMJS_PATH = '/Users/lijian/Applications/phantomjs-1.6.1-macosx-static' 
+#PHANTOMJS_PATH = '/Users/lijian/Applications/phantomjs-1.6.1-macosx-static' 
+CONFIG_DIRECTORY = '/Users/lijian/Workspace/smart-buyer/spider/downloader/conf'
 
 ENABLE_SOLR=True
 SOLR="http://localhost:8983/solr"
