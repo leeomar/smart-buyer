@@ -92,6 +92,8 @@ class DLDailyReport(object):
                 if domain not in result:
                     result[domain] = {} 
                     result[domain][strtime] = [0, value]
+                elif strtime not in result[domain]:
+                    result[domain][strtime] = [0, value]
                 else:
                     result[domain][strtime].append(value)
 
@@ -113,7 +115,6 @@ class DLDailyReport(object):
                     array1.append(0)
                     array2.append(0)
                 row = "%s<td>%s</td>" % (row, data)
-
             chartdata['%s saved' % domain] = array1
             chartdata['%s extracted' % domain] = array2
             table = "%s%s</tr>" % (table, row)
