@@ -92,6 +92,8 @@ class DLDailyReport(object):
                 if domain not in result:
                     result[domain] = {} 
                     result[domain][strtime] = [0, value]
+                elif strtime not in result[domain]:
+                    result[domain][strtime] = [0, value]
                 else:
                     result[domain][strtime].append(value)
 
