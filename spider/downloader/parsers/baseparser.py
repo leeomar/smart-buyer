@@ -63,6 +63,7 @@ class BasicLinkInfo(object):
             cur_xdepth, max_xdepth, content_group, pl_group, source, url)
 
 class BaseParser(LogableObject):
+    MAX_PAGINATION = 100
     IGNORE_LINK_NUM = -1
     ALLOW_CGS = [] 
     LINK_DEPTH_METHODS = {1: 'process_entrypage', 2: 'process_listpage', 3: 'process_contentpage'}
@@ -126,9 +127,16 @@ class BaseParser(LogableObject):
         pass
 
     def crawl_next_page(self):
+        #check max pagination
+        page = self.response.meta.get('_page', 1) + 1
+        if page >= self.MAX_PAGINATION: 
+            self.log('current page[%s] >= MAX_PAGINATION[%s], stop crawl next page from %s'\
+                % (page, self.MAX_PAGINATION, self.response.url))
+            return
+
         url = self.next_page()
         if url:
-            request = self.make_request_from_response(url=url)
+            request = self.make_request_from_response(url=url, _page=page)
             self.crawl(request)
             self.log('crawl next page:%s' % url)
 

@@ -25,6 +25,7 @@ class MySolr(object):
             log.msg("expect Product Record, got %s") % type(record)
             return
 
+        '''
         doc = { "id" : record['uid'], 
                 "prod_uid" : record['uid'],
                 "prod_url" : record['url'], 
@@ -33,7 +34,19 @@ class MySolr(object):
                 "prod_price" : record['data'][-1][0],
                 "prod_domain" : record['domain']
             }
+        log.msg('before save to solr: %s' % doc)
         self.add_doc(doc)
+        '''
+        s = solr.SolrConnection(self.solr_url)
+        s.add(id=record['uid'], 
+              prod_uid = record['uid'],
+              prod_url = record['url'], 
+              prod_name = decode(record['name']),
+              prod_cat = [ decode(item) for item in record['cat'] ],
+              prod_price = record['data'][-1][0],
+              prod_domain = record['domain']
+            )
+        s.commit()
 
     def query(self, text):
         # create a connection to a solr server

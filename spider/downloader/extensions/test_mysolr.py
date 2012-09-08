@@ -2,52 +2,10 @@
 # -*- coding: utf-8 -*- 
 import solr
 from scrapy import log
-#from mysolr import MySolr
-#from downloader.dal.record import ProductRecord
+from mysolr import MySolr
 
-def decode(text, encoding='utf-8'):
-    return text
-    #return text.decode(encoding)
 
-class MySolr(object):
 
-    def __init__(self, url):
-        self.solr_url = url
-
-    def add(self, record):
-        #if not isinstance(record, (ProductRecord, dict)):
-        #    log.msg("expect Product Record, got %s") % type(record)
-        #    return
-
-        # create a connection to a solr server
-        s = solr.SolrConnection(self.solr_url)
-        '''
-            prod_name=u"天伦天 男士 春季新款 户外运动防水鞋 1075",
-            prod_cat=[u"运动健康", u"户外鞋服", u"户外鞋袜"],
-            prod_price=49900,
-            prod_domain='360buy.com',
-            #prod_ts="",
-            #prod_valid="",
-        '''
-        # add a document to the index
-        s.add(id=record['uid'], 
-                prod_uid = record['uid'],
-                prod_url = record['url'], 
-                prod_name = decode(record['name']),
-                prod_cat = [ decode(item) for item in record['cat'] ],
-                prod_price = record['data'][-1][0],
-                prod_domain = record['domain']
-            )
-        s.commit()
-        log.msg('add %s, %s to solr' % (record['url'], record['name']))
-
-    def query(self, text):
-        # create a connection to a solr server
-        s = solr.SolrConnection(self.solr_url)
-        # do a search
-        response = s.query(text)
-        for hit in response.results:
-            print hit['prod_name']
 
 if __name__ == '__main__':
     record = { #"_id" : ObjectId("5024971bd04df0715500077a"), 
@@ -55,9 +13,12 @@ if __name__ == '__main__':
                 "uid" : "3e37d45bbf1d93ae", 
                 "bottom_price" : [ 49900, 1344575259 ], 
                 "url" : "http://www.360buy.com/product/1005442199.html", 
-                "cat" : ["运动健康", "户外鞋服", "户外鞋袜" ], 
+                "cat" : [u"运动健康", u"户外鞋服", u"户外鞋袜" ], 
                 "data" : [ [ 49900, 1344575259 ] ], 
-                "name" : "天伦天 男士 春季新款户外运动防水鞋 1075"
+                "name" : u"天伦天 男士 春季新款户外运动防水鞋 1075"
             }
+
+    record = {'domain': u'360buy.com', 'uid': 'aa7a7030fa68697', 'bottom_price': (9800, 1347072708), 'url': u'http://www.360buy.com/product/509428.html', 'cat': ['\xe8\xbd\xa6\xe8\xbd\xbd\xe7\x94\xb5\xe6\xba\x90'], 'data': [(9800, 1347072708)], 'name': '\xe5\x8d\xa1\xe7\x99\xbb\xe4\xbb\x95\xef\xbc\x88CAPDASE\xef\xbc\x892.1A\xe8\xb6\x85\xe7\x9f\xadMini USB \xe4\xb8\x87\xe8\x83\xbd\xe8\xbd\xa6\xe5\x85\x85\xef\xbc\x88CACB-PPT1\xef\xbc\x89\xe7\x81\xb0\xe8\x89\xb2 \xe9\x80\x9a\xe7\x94\xa8\xe4\xba\x8e\xe8\x8b\xb9\xe6\x9e\x9ciPad iPhone iPod\xe7\xb3\xbb\xe5\x88\x97'}
+
     obj = MySolr('http://localhost:8983/solr')
     obj.add(record)

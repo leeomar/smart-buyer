@@ -33,15 +33,15 @@ class SignalHandler(object):
         self.statistic.save_extract_info(url, link_num)
 
     def handle_product_record_saved(self, record):
-        log.msg("receive signal[product_record_saved], %s" %(record['url'],))
+        log.msg("receive signal[product_record_saved], %s" %(record,))
+        self.statistic.record_saved(record)
+        self.pmengine.process(record)
         '''
             save record to solr
         '''
         if self.enable_solr:
             self.mysolr.add(record)
 
-        self.statistic.record_saved(record)
-        self.pmengine.process(record)
 
     def handle_kele_record_saved(self, doc):
         if self.enable_solr:

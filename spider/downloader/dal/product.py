@@ -49,6 +49,7 @@ class ProductDAO:
                 return
         else: 
             self.mongo.insert(record, uid, collection_name)
+        log.msg("save record: %s" % record)
         send_catch_log(signal=signals.product_record_saved, record=record)
 
 if __name__ == '__main__':
