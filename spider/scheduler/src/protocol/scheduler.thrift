@@ -47,7 +47,7 @@ service Scheduler {
      *      master will do auto registration
      * spider reports its last job info to master
      */
-    SeedsPackage get_seeds(1: string spiderid, 3: JobReport report) throws (1:ServerError err),
+    SeedsPackage get_seeds(1: string spiderid, 2: SeedsPackage last_pkg, 3: JobReport report) throws (1:ServerError err),
     
     /*
      */

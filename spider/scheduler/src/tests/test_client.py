@@ -24,12 +24,15 @@ def main(client):
 
     jobreport = JobReport()
     jobreport.spiderid = 'spider001'
-    pkg = yield client.get_seeds(jobreport.spiderid, jobreport)
-    print pkg
+    pkg = yield client.get_seeds(jobreport.spiderid, None, jobreport)
 
     for seed in pkg.seeds:
         wait = yield client.get_latency_time('spider001', seed.url)
         print '%s waits %s seconds' % (seed.url, wait)
+
+    print pkg
+    apkg = yield client.get_seeds(jobreport.spiderid, pkg, jobreport)
+    print apkg
 
     reactor.stop()
 

@@ -40,9 +40,12 @@ class RequestHandler:
     def do_unregister(self, spiderid):
         pass
 
-    def get_seeds(self, spiderid, report):
+    def get_seeds(self, spiderid, lastpkg, report):
         log.msg("Request get_seeds from %s" % spiderid)
+
+        self.seed_service.commit_seeds(spiderid, lastpkg)
         seeds = self.seed_service.get_seeds(spiderid, report)
+
         pkg = SeedsPackage()
         pkg.ID = "pkg%s" % int(time.time()) 
         pkg.seeds = seeds

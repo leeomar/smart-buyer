@@ -15,6 +15,7 @@ class MemoryBasedSeedsService:
     def __init__(self, pkg_size):
         self.SEED_PKG_SIZE = pkg_size
         self.pending_seeds = []
+        self.running_seeds = []
         self.global_info = GlobalInfo() 
         log.msg("init MemoryBasedSeedsService, SEED_PKG_SIZE:%s" % pkg_size)
 
@@ -35,17 +36,29 @@ class MemoryBasedSeedsService:
         
         results = self.pending_seeds[:num]
         self.pending_seeds = self.pending_seeds[num:]
+        self.running_seeds.extend(results)
         self.global_info.update_spider_report(jobreport, 
             True if num > 0 else False)
 
         log.msg("return %s seeds" % num)
         return results 
 
+    def commit_seeds(self, clientid, pkg):
+        print pkg
+        print clientid
+        if pkg is None:
+            return
+        for seed in pkg.seeds:
+            self.running_seeds.remove(seed)
+            log.msg("rm %s from runing list, commited by %s" % (seed, clientid))
+
     def add_seeds(self, clientid, pkg):
         num = 0
         for seed in pkg.seeds:
             if seed in self.pending_seeds:
-                log.msg("%s is already exist, skip it" % seed.url)
+                log.msg("%s is exist in pending list, skip it" % seed.url)
+            elif seed in self.running_seeds:
+                log.msg("%s is exist in running list, skip it" % seed.url)
             else:
                 self.pending_seeds.append(seed)
                 self.global_info.add_seed(seed)
