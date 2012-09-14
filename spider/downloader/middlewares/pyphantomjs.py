@@ -24,7 +24,7 @@ def fread(fobj, noblock=False):
 
 class PyPhantomJs(object):
     def __init__(self, phantom_path):
-        self.cmd = 'phantomjs' % phantom_path
+        self.cmd = 'phantomjs' #% phantom_path
         self.config = "--config=%s/config.json" % phantom_path
         self.js = "%s/load_page.js" % phantom_path
 

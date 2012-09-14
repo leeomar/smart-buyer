@@ -27,6 +27,7 @@ class SchedulerClient(object):
         self.port = msettings['port']
         self.timeout = msettings.get('timeout', 30)
 
+        self.last_pkg = None
         self.conn_defer = self.connect()
         self.conn = None
         dispatcher.connect(self.handle_spider_idle, 
@@ -62,12 +63,15 @@ class SchedulerClient(object):
         log.msg("%s send seeds request" % spider.name)
         jobreport = JobReport()
         jobreport.spiderid = spider.name 
+
         pkg = yield self.conn.client.get_seeds( \
-            jobreport.spiderid, jobreport)
+            jobreport.spiderid, self.last_pkg, jobreport)
         for seed in pkg.seeds:
             req = self.make_request_from_seed(seed)
             crawler.engine.crawl(req, spider)
             log.msg("crawl %s" % req.url)
+
+        self.last_pkg = pkg
 
     def handle_spider_idle(self, spider):
         #log.msg('%s idle' % spider.name)

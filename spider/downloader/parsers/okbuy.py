@@ -1,31 +1,48 @@
 #/bin/python
+# -*- coding: utf-8 -*-
 
-from .baseparser import BaseParser
+import Image
+from cStringIO import StringIO
 from scrapy.selector import HtmlXPathSelector
-
-from downloader.utils.selector import extract_value
-from downloader.utils.product import canonicalize_price
 from scrapy import log
+
+from downloader.utils.product import canonicalize_price
+from downloader.parsers.baseparser import BaseParser
+from downloader.utils.selector import extract_value
 import json
 
-#http://www.okbuy.com/product/search?category=clothes 
-#http://www.okbuy.com/product/search?category=child_shoes
-#http://www.okbuy.com/product/search?category=bags
-
-#http://www.okbuy.com/product/search
-#http://www.okbuy.com/product/ajax_find_listprice/16970593,16978450
-#http://www.okbuy.com/product/detail/16970593.html?ref=l
-#http://www.okbuy.com/product/search?&per_page=100#listheader
+#http://www.360buy.com/allSort.aspx
+#no need to crawl following categories
+#http://mvd.360buy.com/mvdsort/4051.html　音乐分类
+#http://mvd.360buy.com/mvdsort/4052.html　影视分类
+#http://mvd.360buy.com/mvdsort/4053.html  教育音像
+#http://book.360buy.com/book/booksort.aspx 图书
 class OkbuyParser(BaseParser):
-    ALLOW_CGS = ['okbuy', ]
-    #BASE_URL = "http://www.okbuy.com"
+    ALLOW_CGS =['okbuy', ]
     DETAIL_BASE_URL = "http://www.okbuy.com/product/detail/"
     PRICE_REQUST_URL = "http://www.okbuy.com/product/ajax_find_listprice/"
+    LINK_DEPTH_METHODS = {1: "process_entrypage", 
+        2: 'process_listpage', 3: 'process_ajax_price'}
 
-    LINK_DEPTH_METHODS = {1: 'process_listpage', 2: 'process_ajax_price'}
+    def process_entrypage(self):
+        link_num = 0
+        hxs = HtmlXPathSelector(self.response)
+        rows = hxs.select("//div[@class='t-abcconr']")
+        for row in rows:
+            links = row.select("a")
+            for link in links:
+                url = extract_value(link.select('@href'))
+                brand = extract_value(link.select('p/text()'))
+                request = self.make_request_from_response(
+                    url, brand=brand,
+                    cur_idepth=self.basic_link_info.cur_idepth,
+                    )
+                self.crawl(request)
+                link_num += 1
+        return link_num
 
     def process_listpage(self):
-        item_num = 0
+        link_num = 0
         hxs = HtmlXPathSelector(self.response)
         products = hxs.select('//div[@class="floorConn"]/div[@class="goodsList"]/ul/li')
         prod_id2names = {}
@@ -37,18 +54,18 @@ class OkbuyParser(BaseParser):
 
             prod_ids.append(prod_id)
             prod_id2names[prod_id] = name
-            item_num += 1
+            link_num += 1
 
         request = self.make_request_from_response(
             url= "%s%s" % (self.PRICE_REQUST_URL, ",".join(prod_ids)),
             cur_idepth=self.basic_link_info.cur_idepth,
             prod_id2names=prod_id2names,
             )
-        self.crawl(request)
 
+        self.crawl(request)
         self.crawl_next_page()
-        return item_num
-    
+        return link_num
+
     def process_ajax_price(self):
         jsonobj = json.loads(self.response.body, self.response.encoding)
         prod_id2names = self.response.meta['prod_id2names']
@@ -72,5 +89,3 @@ class OkbuyParser(BaseParser):
             if text.find('下一页') != -1:
                 url = extract_value(item.select('@href'))
                 return url
-
-        return None
